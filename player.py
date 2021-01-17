@@ -13,6 +13,7 @@ m2PosY = 380
 m3PosX = 25
 m3PosY = 380
 
+counter = 0
 
 def setMonsters(firstMon, secMon, thirdMon):
 
@@ -27,8 +28,13 @@ def setMonsters(firstMon, secMon, thirdMon):
 
 
 def printPlayerMonsters():
+    global counter
+    while counter < 1:
+        monsterList[0].attack()
+        monsterList[1].attack()
+        monsterList[2].attack()
+        counter += 1
 
-    monsterList[0].attack()
     monsterList[0].printMonster()
     monsterList[1].printMonster()
     monsterList[2].printMonster()

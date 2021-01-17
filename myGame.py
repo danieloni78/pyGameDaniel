@@ -1,6 +1,7 @@
 import pygame
 import player
 import enemy
+import attackParticles
 import sys
 
 
@@ -53,6 +54,8 @@ def printScreen():
 
     player.printPlayerMonsters()
     enemy.printEnemyMonsters()
+    for a in attackParticles.currentParticles:
+        a.printAttack()
 
     pygame.display.update()
 
@@ -71,7 +74,7 @@ def starten():
             if event.type == pygame.QUIT: sys.exit()
 
         clock.tick(fps)
-
+        attackParticles.hanldeAttacks()
         printScreen()
 
 
