@@ -1,6 +1,11 @@
 import pygame
 
-screen = pygame.display.set_mode([1200, 595])
+screen_width = 1200
+screen_backImg = 600
+screen_panel = 225
+screen_height = screen_backImg + screen_panel
+
+screen = pygame.display.set_mode([screen_width, screen_height])
 
 spdList = [15, 7, 25]
 colorList = [(225, 225, 195), (55, 0, 80), (230, 100, 0)]

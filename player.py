@@ -1,8 +1,12 @@
 import pygame
 import monsters
 
+screen_width = 1200
+screen_backImg = 600
+screen_panel = 225
+screen_height = screen_backImg + screen_panel
 
-screen = pygame.display.set_mode([1200, 595])
+screen = pygame.display.set_mode([screen_width, screen_height])
 
 monsterList = []
 
@@ -30,9 +34,9 @@ def setMonsters(firstMon, secMon, thirdMon):
 def printPlayerMonsters():
     global counter
     while counter < 1:
-        monsterList[0].attack()
-        monsterList[1].attack()
-        monsterList[2].attack()
+        #monsterList[0].attack()
+        #monsterList[1].attack()
+        #monsterList[2].attack()
         counter += 1
 
     monsterList[0].printMonster()

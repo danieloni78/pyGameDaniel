@@ -1,8 +1,12 @@
 import pygame
 import monsters
 
+screen_width = 1200
+screen_backImg = 600
+screen_panel = 225
+screen_height = screen_backImg + screen_panel
 
-screen = pygame.display.set_mode([1200, 595])
+screen = pygame.display.set_mode([screen_width, screen_height])
 
 monsterList = []
 

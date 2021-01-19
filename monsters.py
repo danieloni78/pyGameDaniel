@@ -1,14 +1,22 @@
 import pygame
 import attackParticles
 import random
+import printFunctions
+
+screen_width = 1200
+screen_backImg = 600
+screen_panel = 225
+screen_height = screen_backImg + screen_panel
 
 pygame.init()
-screen = pygame.display.set_mode([1200, 595])
+screen = pygame.display.set_mode([screen_width, screen_height])
 
 #Sounds
 shootingSound = pygame.mixer.Sound("sounds/laser1.wav")
 jumpingSound = pygame.mixer.Sound("sounds/jump.wav")
 
+#Font for Monster Stats
+font = pygame.font.SysFont(None, 30)
 
 #Monster List
 monstName = ["Machamp", "Mewtwo", "Gengar"]
@@ -83,8 +91,11 @@ counter2 = 0
 
 class monster:
     def __init__(self, select, player, posX, posY):
+        global font
+
         self.select = select
         self.player = player
+        self.name = monstName[select]
         if player:
             self.static = p_static[select]
             self.jump = p_jump[select]
@@ -101,11 +112,14 @@ class monster:
                 self.speed -= 5
         self.type = monstType[select]
         self.hp = monstHp[select]
+        self.maxHp = monstHp[select]
         self.dmg = monstDmg[select]
         self.posX = posX
         self.posY = posY
         self.basePosX = posX
         self.basePosY = posY
+        self.width = 150
+        self.height = 150
         self.staticTics = 0
         self.steps = 0
         self.inJump = False
@@ -113,6 +127,10 @@ class monster:
         self.action = 0
         self.rangedAttType = attType[select]
         self.particleCounter = 0
+        self.rect = pygame.Rect(self.posX+35, self.posY+30, self.width-70, self.height-30)
+
+        self.nameRender = font.render(self.name, True, (255, 255, 255))
+        self.hpRendeer = font.render(f'HP: {self.hp*10} / {self.maxHp*10}', True, (255, 255 ,255))
 
     def printMonster(self):
 
@@ -125,6 +143,16 @@ class monster:
         # 16 // 4 = 4 <- Out of Range
         if self.steps >= 15:
             self.steps = 0
+
+        self.rect = pygame.Rect(self.posX+20, self.posY+30, self.width-40, self.height-30)
+        pygame.draw.rect(screen, (255, 0, 0), self.rect, 7)
+
+
+        # MonsterName
+        screen.blit(self.nameRender, (self.basePosX + 25, self.basePosY + self.height + 100))
+        screen.blit(self.hpRendeer, (self.basePosX + 10, self.basePosY + self.height + 200))
+
+
 
         #static
         if self.action == 0:
@@ -139,11 +167,11 @@ class monster:
             # Makes Assassin transparent
             if self.select == 2:
                 if self.steps % 4 == 0:
-                    blit_alpha(screen, self.movement[self.steps // 4],(self.posX, self.posY), 128)
+                    printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 128)
                 if self.steps % 4 == 1 or self.steps % 4 == 2:
-                    blit_alpha(screen, self.movement[self.steps // 4],(self.posX, self.posY), 180)
+                    printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 180)
                 else:
-                    blit_alpha(screen, self.movement[self.steps // 4],(self.posX, self.posY), 150)
+                    printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 150)
 
             else:
                 screen.blit(self.movement[self.steps // 4], (self.posX, self.posY))
@@ -153,7 +181,7 @@ class monster:
             self.steps += 1
             counter += 1
 
-            if counter >= 200:
+            if counter >= 500:
                 self.action = 0
 
 
@@ -161,7 +189,7 @@ class monster:
         if self.action == 2:
             #Makes Assassin transparent
             if self.select == 2:
-                blit_alpha(screen, self.movement[self.steps // 4], (self.posX, self.posY), 120)
+                printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 120)
             else:
                 screen.blit(self.jump, (self.posX, self.posY))
             if self.jumpvar >= -14:
@@ -229,12 +257,3 @@ class monster:
         self.action = 2
         pygame.mixer.Sound.play(jumpingSound)
 
-
-def blit_alpha(target, source, location, opacity):
-    x_temp = location[0]
-    y_temp = location[1]
-    temp = pygame.Surface((source.get_width(), source.get_height())).convert()
-    temp.blit(target, (-x_temp, -y_temp))
-    temp.blit(source, (0, 0))
-    temp.set_alpha(opacity)
-    target.blit(temp, location)
