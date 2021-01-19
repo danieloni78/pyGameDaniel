@@ -353,6 +353,7 @@ class monster:
                 multiplicator = 0.5
 
         self.target.hp = self.target.hp - (self.dmg * multiplicator)
+        self.target.hpRendeer = font.render(f'HP: {int(self.target.hp*10)} / {int(self.target.maxHp*10)}', True, (255, 255 ,255))
 
 
     #Monster is dead
