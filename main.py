@@ -27,7 +27,7 @@ menu.add_selector('Last Monster: ',
 
 menu.add_selector('Enemy: ',
                   [('Easy', 0), ('Medium', 1), ('Hard', 2)],
-                  onchange=myGame.set_Enemy)
+                  onchange=myGame.init_Enemy)
 
 menu.add_button('Play', myGame.startGame)
 menu.add_button('Quit', pygame_menu.events.EXIT)

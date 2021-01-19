@@ -34,6 +34,7 @@ firstMonst = [('Machamp', 0)]
 secondMonst = [('Mewtwo', 1)]
 lastMonst = [('Gengar', 2)]
 
+eNumber = 0
 
 eFirstMonst = [('Machamp', 0)]
 eSecondMonst = [('Mewtwo', 1)]
@@ -102,6 +103,7 @@ def inGameMenu(won):
 
     if won:
         pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Battle Simulator - Round: {rounds}')
+        setEnemy(eNumber)
         gameMenu = pygame_menu.Menu(700, 1000, 'You have won.', theme=pygame_menu.themes.THEME_BLUE)
         gameMenu.add_selector('First Monster: ',
                               [('Machamp (Melee)', 0), ('Mewtwo (Ranged)', 1), ('Gengar (Assassin)', 2)],
@@ -121,6 +123,7 @@ def inGameMenu(won):
         gameMenu.mainloop(screen)
 
     else:
+        init_Enemy(None, eNumber)
         gameMenu = pygame_menu.Menu(700, 1000, 'You have lost.', theme=pygame_menu.themes.THEME_BLUE)
         gameMenu.add_selector('First Monster: ',
                               [('Machamp (Melee)', 0), ('Mewtwo (Ranged)', 1), ('Gengar (Assassin)', 2)],
@@ -181,8 +184,18 @@ def starten():
                         if counter == length-1:
                             counter = 1
 
+
                         elif counter == length-2:
                             counter = 0
+
+
+                        elif turnOrder[0].isDead() and turnOrder[1].isDead() and turnOrder[3].isDead() and counter == 0:
+                            i = 0
+                            if i == 1:
+                                counter = length-2
+                            else:
+                                counter = 2
+
 
                         else:
                             counter += 2
@@ -190,13 +203,15 @@ def starten():
 
                     if turnOrder[counter].player:
                         target = enemy.getNextTarget()
+                        waitingCounter = 0
 
                     else:
                         target = player.getNextTarget()
+                        waitingCounter = 0
 
                     turnOrder[counter].attack(target)
                     counter += 1
-                    waitingCounter = 0
+
 
 
 
@@ -245,83 +260,92 @@ def set_secMon(monster, number):
     global secondMonst
     secondMonst = monster
 
+
 def set_lastMon(monster, number):
     global lastMonst
     lastMonst = monster
 
+
 def startGame():
     new(firstMonst, secondMonst, lastMonst)
 
-def set_Enemy(enemy, number):
 
-    eRounds = rounds
+def init_Enemy(enemy, number):
+    global eNumber
+    eNumber = number
+    setEnemy(number)
+
+
+def setEnemy(number):
+
+    global eFirstMonst, eSecondMonst, eLastMonst
+
+
+
+    eRounds = rounds-1
     if rounds > 3:
         eRounds = random.randint(0, 2)
 
-    global eFirstMonst, eSecondMonst, eLastMonst
 
     #easy
     if number == 0:
 
         #Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = ('Machamp', 0)
-            eSecondMonst = ('Machamp', 0)
-            eLastMonst = ('Machamp', 0)
+            eFirstMonst = [('Machamp', 0)]
+            eSecondMonst = [('Machamp', 0)]
+            eLastMonst = [('Machamp', 0)]
 
         #Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = ('Mewtwo', 1)
-            eSecondMonst = ('Mewtwo', 1)
-            eLastMonst = ('Mewtwo', 1)
+            eFirstMonst = [('Mewtwo', 1)]
+            eSecondMonst = [('Mewtwo', 1)]
+            eLastMonst = [('Mewtwo', 1)]
 
         #Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = ('Gengar', 2)
-            eSecondMonst = ('Gengar', 2)
-            eLastMonst = ('Gengar', 2)
+            eFirstMonst = [('Gengar', 2)]
+            eSecondMonst = [('Gengar', 2)]
+            eLastMonst = [('Gengar', 2)]
 
     # Medium
     if number == 1:
 
         # Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = ('Gengar', 2)
-            eSecondMonst = ('Gengar', 2)
-            eLastMonst = ('Gengar', 2)
+            eFirstMonst = [('Gengar', 2)]
+            eSecondMonst = [('Gengar', 2)]
+            eLastMonst = [('Gengar', 2)]
 
         # Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = ('Machamp', 0)
-            eSecondMonst = ('Mewtwo', 1)
-            eLastMonst = ('Gengar', 2)
+            eFirstMonst = [('Machamp', 0)]
+            eSecondMonst = [('Mewtwo', 1)]
+            eLastMonst = [('Gengar', 2)]
 
         # Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = ('Machamp', 0)
-            eSecondMonst = ('Mewtwo', 1)
-            eLastMonst = ('Gengar', 2)
+            eFirstMonst = [('Machamp', 0)]
+            eSecondMonst = [('Mewtwo', 1)]
+            eLastMonst = [('Gengar', 2)]
 
     # Hard
     if number == 2:
 
         # Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = ('Mewtwo', 1)
-            eSecondMonst = ('Mewtwo', 1)
-            eLastMonst = ('Mewtwo', 1)
+            eFirstMonst = [('Mewtwo', 1)]
+            eSecondMonst = [('Mewtwo', 1)]
+            eLastMonst = [('Mewtwo', 1)]
 
         # Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = ('Machamp', 0)
-            eSecondMonst = ('Mewtwo', 1)
-            eLastMonst = ('Gengar', 2)
+            eFirstMonst = [('Machamp', 0)]
+            eSecondMonst = [('Mewtwo', 1)]
+            eLastMonst = [('Gengar', 2)]
 
         # Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = ('Machamp', 0)
-            eSecondMonst = ('Mewtwo', 1)
-            eLastMonst = ('Gengar', 2)
-
-
-
+            eFirstMonst = [('Machamp', 0)]
+            eSecondMonst = [('Mewtwo', 1)]
+            eLastMonst = [('Gengar', 2)]
