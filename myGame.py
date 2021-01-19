@@ -203,14 +203,15 @@ def starten():
 
                     if turnOrder[counter].player:
                         target = enemy.getNextTarget()
-                        waitingCounter = 0
+
 
                     else:
                         target = player.getNextTarget()
-                        waitingCounter = 0
+
 
                     turnOrder[counter].attack(target)
                     counter += 1
+                    waitingCounter = 0
 
 
 
