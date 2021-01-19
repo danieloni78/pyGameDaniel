@@ -14,17 +14,20 @@ screen = pygame.display.set_mode([screen_width, screen_height])
 #Sounds
 shootingSound = pygame.mixer.Sound("sounds/laser1.wav")
 jumpingSound = pygame.mixer.Sound("sounds/jump.wav")
+punchSound = pygame.mixer.Sound("sounds/punch.wav")
 
 #Font for Monster Stats
 font = pygame.font.SysFont(None, 30)
+deadRender = font.render("DEAD", True, (255, 255, 255))
 
 #Monster List
 monstName = ["Machamp", "Mewtwo", "Gengar"]
 # 0 = Melee, 1 = Ranged, 2 = Assassin
 monstType = [0, 1, 2]
-monstHp = [10, 8, 8]
-monstDmg = [2, 3, 3]
+monstHp = [12, 10, 8]
+monstDmg = [2, 3, 4]
 attType = [0, 1, 2]
+effectiveList = [[2], [0], [1]]
 
 #static image of the monster
 p_static = [[pygame.image.load("textures/machamp/player1.png"),
@@ -129,13 +132,20 @@ class monster:
         self.particleCounter = 0
         self.rect = pygame.Rect(self.posX+35, self.posY+30, self.width-70, self.height-30)
 
+
+        self.effectiveAgainst = effectiveList[select]
+
         self.nameRender = font.render(self.name, True, (255, 255, 255))
         self.hpRendeer = font.render(f'HP: {self.hp*10} / {self.maxHp*10}', True, (255, 255 ,255))
+
+        self.target = self
+
 
     def printMonster(self):
 
         global counter
         global counter2
+        global deadRender
 
         # 4 // 2 = 2 <- Out of Range
         if self.staticTics >= 19:
@@ -145,93 +155,147 @@ class monster:
             self.steps = 0
 
         self.rect = pygame.Rect(self.posX+20, self.posY+30, self.width-40, self.height-30)
-        pygame.draw.rect(screen, (255, 0, 0), self.rect, 7)
+
+        #Check Hitbox Rectangle
+        #pygame.draw.rect(screen, (255, 0, 0), self.rect, 7)
 
 
         # MonsterName
         screen.blit(self.nameRender, (self.basePosX + 25, self.basePosY + self.height + 100))
-        screen.blit(self.hpRendeer, (self.basePosX + 10, self.basePosY + self.height + 200))
+
+        #Draw Healthbar
+        self.drawHealthBar()
+
+        #If monster is dead
+        if self.isDead():
+            screen.blit(deadRender, (self.basePosX + 30, self.basePosY + self.height + 200))
+
+        #If monster is not dead
+        else:
+            screen.blit(self.hpRendeer, (self.basePosX + 10, self.basePosY + self.height + 200))
+            #static
 
 
+            if self.action == 0:
+                self.posX = self.basePosX
+                self.posY = self.basePosY
+                screen.blit(self.static[self.staticTics // 10], (self.posX, self.posY))
+                self.staticTics += 1
 
-        #static
-        if self.action == 0:
-            self.posX = self.basePosX
-            self.posY = self.basePosY
-            screen.blit(self.static[self.staticTics // 10], (self.posX, self.posY))
-            self.staticTics += 1
+            #walking/melee attacking
+            if self.action == 1:
 
-        #walking/melee attacking
-        if self.action == 1:
+                # Makes Assassin transparent
+                if self.select == 2:
+                    if self.steps % 4 == 0:
+                        printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 128)
+                    if self.steps % 4 == 1 or self.steps % 4 == 2:
+                        printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 180)
+                    else:
+                        printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 150)
 
-            # Makes Assassin transparent
-            if self.select == 2:
-                if self.steps % 4 == 0:
-                    printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 128)
-                if self.steps % 4 == 1 or self.steps % 4 == 2:
-                    printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 180)
                 else:
-                    printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 150)
-
-            else:
-                screen.blit(self.movement[self.steps // 4], (self.posX, self.posY))
+                    screen.blit(self.movement[self.steps // 4], (self.posX, self.posY))
 
 
-            self.posX += self.speed
-            self.steps += 1
-            counter += 1
-
-            if counter >= 500:
-                self.action = 0
-
-
-        #jumping
-        if self.action == 2:
-            #Makes Assassin transparent
-            if self.select == 2:
-                printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 120)
-            else:
-                screen.blit(self.jump, (self.posX, self.posY))
-            if self.jumpvar >= -14:
-                n = 1
-                if self.jumpvar < 0:
-                    n = -1
-                self.posY -= (self.jumpvar ** 2) * 0.25 * n
                 self.posX += self.speed
-                self.jumpvar -= 1
-            else:
-                self.inJump = False
-                self.action = 1
+                self.steps += 1
+                counter += 1
+
+                #Target was hit
+                if self.rect.colliderect(self.target.rect):
+                    self.posX = self.basePosX
+                    self.posY = self.basePosY
+                    self.action = 0
+                    counter = 0
+
+                    #Damage the target
+                    self.calcDamage()
+                    #Hitting Sound
+                    pygame.mixer.Sound.play(punchSound)
 
 
-        #shooting
-        if self.action == 3:
-            self.posX = self.basePosX
-            self.posY = self.basePosY
-            screen.blit(self.static[0], (self.posX, self.posY))
+                #If monster missed the target
+                elif counter >= 200:
+                    self.action = 0
+                    counter = 0
 
-            if self.particleCounter < attackParticles.amountList[self.rangedAttType]:
-                attackParticles.currentParticles.append(attackParticles.rangedAttack(round(self.posX),
-                                                                                     round(self.posY),
-                                                                                     self.rangedAttType,
-                                                                                     self.player))
-                self.particleCounter +=1
-            else:
-                self.particleCounter = 0
-                self.action = 0
+                    #Damage the target
+                    self.calcDamage()
+                    #Hitting Sound
+                    pygame.mixer.Sound.play(punchSound)
+
+
+            #jumping
+            if self.action == 2:
+                #Makes Assassin transparent
+                if self.select == 2:
+                    printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 120)
+                else:
+                    screen.blit(self.jump, (self.posX, self.posY))
+                if self.jumpvar >= -14:
+                    n = 1
+                    if self.jumpvar < 0:
+                        n = -1
+                    self.posY -= (self.jumpvar ** 2) * 0.25 * n
+                    self.posX += self.speed
+                    self.jumpvar -= 1
+                else:
+                    self.inJump = False
+                    self.action = 1
+
+
+            #shooting
+            if self.action == 3:
+                self.posX = self.basePosX
+                self.posY = self.basePosY
+                screen.blit(self.static[0], (self.posX, self.posY))
+
+                if self.particleCounter < attackParticles.amountList[self.rangedAttType]:
+                    attackParticles.currentParticles.append(attackParticles.rangedAttack(round(self.posX),
+                                                                                         round(self.posY),
+                                                                                         self.rangedAttType,
+                                                                                         self.player))
+                    self.particleCounter +=1
+
+
+                #firstParticle = len(attackParticles.currentParticles) - 1
+                a = attackParticles.currentParticles[0]
+                attRect = pygame.Rect(a.x - a.rad, a.y - a.rad, a.rad*2, a.rad*2)
+
+                if self.target.rect.colliderect(attRect):
+                    attackParticles.currentParticles.clear()
+                    self.particleCounter = 0
+                    self.action = 0
+
+                    #Damage the target
+                    self.calcDamage()
+
+                    #Hitting Sound
+                    pygame.mixer.Sound.play(punchSound)
 
 
 
     #Chose the Attack Type
-    def attack(self):
-        if self.type == 0:
-            self.meleeAtt()
+    def attack(self, target):
 
-        if self.type == 1:
-            self.rangedAtt()
+        self.posX = self.basePosX
+        self.posY = self.basePosY
+        self.target.posX = self.target.basePosX
+        self.target.posY = self.target.basePosY
 
-        if self.type == 2:
-            self.assassinAttack()
+        if not self.isDead():
+
+            self.target = target
+
+            if self.type == 0:
+                self.meleeAtt()
+
+            if self.type == 1:
+                self.rangedAtt()
+
+            if self.type == 2:
+                self.assassinAttack()
 
 
 
@@ -257,3 +321,44 @@ class monster:
         self.action = 2
         pygame.mixer.Sound.play(jumpingSound)
 
+
+    def drawHealthBar(self):
+
+        #Calculate the HP Ratio
+        hpRatio = self.hp / self.maxHp
+
+        #Draw a Red Line with max HP
+        pygame.draw.rect(screen, (255, 0, 0), (self.basePosX, self.basePosY + self.height + 150, 150, 30))
+
+        #Draw a Green line based on the HP ratio over the red Line
+        pygame.draw.rect(screen, (0, 255, 0), (self.basePosX, self.basePosY + self.height + 150, round(150 * hpRatio), 30))
+
+
+    #Calculate the damage against target HP
+    def calcDamage(self):
+
+        #set default Attack Multiplicator
+        multiplicator = 1
+
+        for aType in self.effectiveAgainst:
+
+            #Is the monster effective against the target
+            if aType == self.target.type:
+                multiplicator = 2
+
+        for targetaType in self.target.effectiveAgainst:
+
+            #Is the target effective against the monster
+            if targetaType == self.type:
+                multiplicator = 0.5
+
+        self.target.hp = self.target.hp - (self.dmg * multiplicator)
+
+
+    #Monster is dead
+    def isDead(self):
+
+        if self.hp <= 0:
+            return True
+        else:
+            return False
