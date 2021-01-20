@@ -14,15 +14,30 @@ pygame.display.set_caption("WIP Project: pyGame by Daniel Wetzel - Battle Simula
 
 menu = pygame_menu.Menu(700, 1000, 'Welcome', theme=pygame_menu.themes.THEME_BLUE)
 menu.add_selector('First Monster: ',
-                  [('Machamp (Melee)', 0), ('Mewtwo (Ranged)', 1), ('Gengar (Assassin)', 2)],
+                  [("Venusaur", 15), ('Bulbasaur (Melee)', 0), ('Squirtle (Melee)', 1), ('Charmander (Ranged)', 2),
+                   ("Pikachu (Assassin)",3), ("Gastly (Assassin)", 4),("Machop (Melee)",5),
+                   ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                   ("Haunter", 12),("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                   ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                   ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                   onchange=myGame.set_firtMon)
 
 menu.add_selector('Second Monster: ',
-                  [('Mewtwo (Ranged)', 1), ('Gengar (Assassin)', 2), ('Machamp (Melee)', 0)],
+                  [("Blastoise", 16), ('Squirtle (Melee)', 1), ('Bulbasaur (Melee)', 0), ('Charmander (Ranged)', 2),
+                   ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
+                   ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                   ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                   ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                   ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                   onchange=myGame.set_secMon)
 
 menu.add_selector('Last Monster: ',
-                  [('Gengar (Assassin)', 2), ('Machamp (Melee)', 0), ('Mewtwo (Ranged)', 1)],
+                  [("Charizard", 17), ('Charmander (Ranged)', 2),('Bulbasaur (Melee)', 0), ('Squirtle (Melee)', 1),
+                   ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
+                   ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                   ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                   ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                   ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                   onchange=myGame.set_lastMon)
 
 menu.add_selector('Enemy: ',

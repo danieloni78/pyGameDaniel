@@ -2,6 +2,7 @@ import pygame
 import attackParticles
 import random
 import printFunctions
+import loadTextures
 
 screen_width = 1200
 screen_backImg = 600
@@ -21,72 +22,26 @@ font = pygame.font.SysFont(None, 30)
 deadRender = font.render("DEAD", True, (255, 255, 255))
 
 #Monster List
-monstName = ["Machamp", "Mewtwo", "Gengar"]
+monstName = ["Bulbasaur", "Squirtle", "Charmander", "Pikachu", "Gastly", "Machop", "Dratini", "", "",
+             "Ivysaur", "Wartortle", "Charmeleon", "Haunter", "Machoke", "Dragonair", "Venusaur", "Blastoise", "Charizard",
+             "Gengar", "Machamp", "Dragonite", "Snorlax", "Mewtwo"]
+
 # 0 = Melee, 1 = Ranged, 2 = Assassin
-monstType = [0, 1, 2]
-monstHp = [12, 10, 8]
-monstDmg = [2, 3, 4]
-attType = [0, 1, 2]
-effectiveList = [[2], [0], [1]]
-
-#static image of the monster
-p_static = [[pygame.image.load("textures/machamp/player1.png"),
-             pygame.image.load("textures/machamp/player2.png")],
-
-            [pygame.image.load("textures/mewtwo/player1.png"),
-             pygame.image.load("textures/mewtwo/player2.png")],
-
-            [pygame.image.load("textures/gengar/player1.png"),
-             pygame.image.load("textures/gengar/player2.png")]]
-
-e_static = [[pygame.image.load("textures/machamp/enemy1.png"),
-             pygame.image.load("textures/machamp/enemy2.png")],
-
-            [pygame.image.load("textures/mewtwo/enemy1.png"),
-             pygame.image.load("textures/mewtwo/enemy2.png")],
-
-            [pygame.image.load("textures/gengar/enemy1.png"),
-             pygame.image.load("textures/gengar/enemy2.png")]]
-
-p_jump = [pygame.image.load("textures/machamp/playerjump1.png"),
-          pygame.image.load("textures/mewtwo/playerjump1.png"),
-          pygame.image.load("textures/gengar/playerjump1.png")]
-
-e_jump = [pygame.image.load("textures/machamp/enemyjump1.png"),
-          pygame.image.load("textures/mewtwo/enemyjump1.png"),
-          pygame.image.load("textures/gengar/enemyjump1.png")]
-
-p_move = [[pygame.image.load("textures/machamp/player1.png"),
-           pygame.image.load("textures/machamp/playerjump1.png"),
-           pygame.image.load("textures/machamp/playerjump2.png"),
-           pygame.image.load("textures/machamp/player2.png")],
-
-          [pygame.image.load("textures/mewtwo/player2.png"),
-           pygame.image.load("textures/mewtwo/playerjump1.png"),
-           pygame.image.load("textures/mewtwo/playerjump2.png"),
-           pygame.image.load("textures/mewtwo/player2.png")],
-
-          [pygame.image.load("textures/gengar/player2.png"),
-           pygame.image.load("textures/gengar/playerjump1.png"),
-           pygame.image.load("textures/gengar/playerjump2.png"),
-           pygame.image.load("textures/gengar/player2.png")]
-          ]
-
-e_move = [[pygame.image.load("textures/machamp/enemy1.png"),
-           pygame.image.load("textures/machamp/enemyjump1.png"),
-           pygame.image.load("textures/machamp/enemyjump2.png"),
-           pygame.image.load("textures/machamp/enemy2.png")],
-
-          [pygame.image.load("textures/mewtwo/enemy2.png"),
-           pygame.image.load("textures/mewtwo/enemyjump1.png"),
-           pygame.image.load("textures/mewtwo/enemyjump2.png"),
-           pygame.image.load("textures/mewtwo/enemy2.png")],
-
-          [pygame.image.load("textures/gengar/enemy2.png"),
-           pygame.image.load("textures/gengar/enemyjump1.png"),
-           pygame.image.load("textures/gengar/enemyjump2.png"),
-           pygame.image.load("textures/gengar/enemy2.png")]
-          ]
+monstType = [0, 0, 1, 2, 2, 0, 1, 0, 0,
+             0, 0, 1, 2, 0, 1, 1, 1, 1,
+             2, 0, 0, 1, 1]
+monstHp = [5, 5, 4, 4, 3, 5, 3, 0, 0,
+           8, 8, 7, 6, 9, 8, 14, 13, 12,
+           10, 14, 16, 18, 15]
+monstDmg = [1, 1, 2, 1, 2, 1, 2, 0, 0,
+            3, 3, 4, 5, 3, 4, 6, 7, 8,
+            10, 8, 9, 7, 10]
+attType = [0, 0, 2, 0, 0, 0, 1, 0, 0,
+           0, 0, 2, 1, 0, 0, 0, 0, 2,
+           1, 0, 0, 0, 1]
+effectiveList = [[2], [2], [0], [0], [1], [2], [0], [0], [0],
+                 [2], [2], [0], [1], [2], [0], [0], [0], [0],
+                 [1], [2], [0], [2], [0]]
 
 
 counter = 0
@@ -99,21 +54,21 @@ class monster:
         self.select = select
         self.player = player
         self.name = monstName[select]
+        self.type = monstType[select]
         if player:
-            self.static = p_static[select]
-            self.jump = p_jump[select]
-            self.movement = p_move[select]
+            self.static = loadTextures.loadStaticPlayer(select)
+            self.jump = loadTextures.loadJumpPlayer(select)
+            self.movement = loadTextures.loadMovePlayer(select)
             self.speed = 5
-            if self.select == 2:
+            if self.type == 2:
                 self.speed += 5
         else:
-            self.static = e_static[select]
-            self.jump = e_jump[select]
-            self.movement = e_move[select]
+            self.static = loadTextures.loadStaticEnemy(select)
+            self.jump = loadTextures.loadJumpEnemy(select)
+            self.movement = loadTextures.loadMoveEnemy(select)
             self.speed = -5
-            if self.select == 2:
+            if self.type == 2:
                 self.speed -= 5
-        self.type = monstType[select]
         self.hp = monstHp[select]
         self.maxHp = monstHp[select]
         self.dmg = monstDmg[select]
@@ -186,7 +141,7 @@ class monster:
             if self.action == 1:
 
                 # Makes Assassin transparent
-                if self.select == 2:
+                if self.type == 2:
                     if self.steps % 4 == 0:
                         printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 128)
                     if self.steps % 4 == 1 or self.steps % 4 == 2:
@@ -229,7 +184,7 @@ class monster:
             #jumping
             if self.action == 2:
                 #Makes Assassin transparent
-                if self.select == 2:
+                if self.type == 2:
                     printFunctions.print_transparent(screen, self.movement[self.steps // 4], (self.posX, self.posY), 120)
                 else:
                     screen.blit(self.jump, (self.posX, self.posY))

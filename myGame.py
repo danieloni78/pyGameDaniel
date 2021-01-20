@@ -30,15 +30,15 @@ losingSound = pygame.mixer.Sound("sounds/losing.wav")
 
 #Variables
 fps = 60
-firstMonst = [('Machamp', 0)]
-secondMonst = [('Mewtwo', 1)]
-lastMonst = [('Gengar', 2)]
+firstMonst = [("Venusaur", 15)]
+secondMonst = [("Blastoise", 16)]
+lastMonst = [("Charizard", 17)]
 
 eNumber = 0
 
-eFirstMonst = [('Machamp', 0)]
-eSecondMonst = [('Mewtwo', 1)]
-eLastMonst = [('Gengar', 2)]
+eFirstMonst = [('Bulbasaur', 0)]
+eSecondMonst = [('Squirtle', 1)]
+eLastMonst = [('Charmander', 2)]
 
 
 #Set the amount of time the game idles after every action
@@ -106,15 +106,32 @@ def inGameMenu(won):
         setEnemy(eNumber)
         gameMenu = pygame_menu.Menu(700, 1000, 'You have won.', theme=pygame_menu.themes.THEME_BLUE)
         gameMenu.add_selector('First Monster: ',
-                              [('Machamp (Melee)', 0), ('Mewtwo (Ranged)', 1), ('Gengar (Assassin)', 2)],
+                              [("Venusaur", 15), ('Bulbasaur (Melee)', 0), ('Squirtle (Melee)', 1), ('Charmander (Ranged)', 2),
+                               ("Pikachu (Assassin)",3), ("Gastly (Assassin)", 4),("Machop (Melee)",5),
+                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                               ("Haunter", 12),("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                               onchange=set_firtMon)
 
         gameMenu.add_selector('Second Monster: ',
-                              [('Mewtwo (Ranged)', 1), ('Gengar (Assassin)', 2), ('Machamp (Melee)', 0)],
+                              [("Blastoise", 16), ('Squirtle (Melee)', 1), ('Bulbasaur (Melee)', 0),
+                               ('Charmander (Ranged)', 2),
+                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
+                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                               onchange=set_secMon)
 
         gameMenu.add_selector('Last Monster: ',
-                              [('Gengar (Assassin)', 2), ('Machamp (Melee)', 0), ('Mewtwo (Ranged)', 1)],
+                              [("Charizard", 17), ('Charmander (Ranged)', 2), ('Bulbasaur (Melee)', 0),
+                               ('Squirtle (Melee)', 1),
+                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
+                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                               onchange=set_lastMon)
 
         gameMenu.add_button('Next Enemy', startGame)
@@ -126,15 +143,33 @@ def inGameMenu(won):
         init_Enemy(None, eNumber)
         gameMenu = pygame_menu.Menu(700, 1000, 'You have lost.', theme=pygame_menu.themes.THEME_BLUE)
         gameMenu.add_selector('First Monster: ',
-                              [('Machamp (Melee)', 0), ('Mewtwo (Ranged)', 1), ('Gengar (Assassin)', 2)],
+                              [("Venusaur", 15), ('Bulbasaur (Melee)', 0), ('Squirtle (Melee)', 1),
+                               ('Charmander (Ranged)', 2),
+                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
+                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                               onchange=set_firtMon)
 
         gameMenu.add_selector('Second Monster: ',
-                              [('Mewtwo (Ranged)', 1), ('Gengar (Assassin)', 2), ('Machamp (Melee)', 0)],
+                              [("Blastoise", 16), ('Squirtle (Melee)', 1), ('Bulbasaur (Melee)', 0),
+                               ('Charmander (Ranged)', 2),
+                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
+                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                               onchange=set_secMon)
 
         gameMenu.add_selector('Last Monster: ',
-                              [('Gengar (Assassin)', 2), ('Machamp (Melee)', 0), ('Mewtwo (Ranged)', 1)],
+                              [("Charizard", 17), ('Charmander (Ranged)', 2), ('Bulbasaur (Melee)', 0),
+                               ('Squirtle (Melee)', 1),
+                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
+                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
+                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
+                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
+                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
                               onchange=set_lastMon)
         gameMenu.add_button('Try Again', startGame)
         gameMenu.add_button('Quit', pygame_menu.events.EXIT)
@@ -293,60 +328,60 @@ def setEnemy(number):
 
         #Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = [('Machamp', 0)]
-            eSecondMonst = [('Machamp', 0)]
-            eLastMonst = [('Machamp', 0)]
+            eFirstMonst = [('Bulbasaur', 0)]
+            eSecondMonst = [('Squirtle', 1)]
+            eLastMonst = [('Charmander', 2)]
 
         #Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = [('Mewtwo', 1)]
-            eSecondMonst = [('Mewtwo', 1)]
-            eLastMonst = [('Mewtwo', 1)]
+            eFirstMonst = [("Ivysaur", 9)]
+            eSecondMonst = [("Wartortle", 10)]
+            eLastMonst = [("Charmeleon", 11)]
 
         #Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = [('Gengar', 2)]
-            eSecondMonst = [('Gengar', 2)]
-            eLastMonst = [('Gengar', 2)]
+            eFirstMonst = [("Venusaur", 15)]
+            eSecondMonst = [("Blastoise", 16)]
+            eLastMonst = [("Charizard", 17)]
 
     # Medium
     if number == 1:
 
         # Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = [('Gengar', 2)]
-            eSecondMonst = [('Gengar', 2)]
-            eLastMonst = [('Gengar', 2)]
+            eFirstMonst = [("Machop", 5)]
+            eSecondMonst = [("Pikachu", 3)]
+            eLastMonst = [("Gastly", 4)]
 
         # Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = [('Machamp', 0)]
-            eSecondMonst = [('Mewtwo', 1)]
-            eLastMonst = [('Gengar', 2)]
+            eFirstMonst = [("Snorlax", 21)]
+            eSecondMonst = [("Machoke", 13)]
+            eLastMonst = [("Haunter", 12)]
 
         # Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = [('Machamp', 0)]
-            eSecondMonst = [('Mewtwo', 1)]
-            eLastMonst = [('Gengar', 2)]
+            eFirstMonst = [("Snorlax", 21)]
+            eSecondMonst = [("Machamp", 19)]
+            eLastMonst = [("Gengar", 18)]
 
     # Hard
     if number == 2:
 
         # Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = [('Mewtwo', 1)]
-            eSecondMonst = [('Mewtwo', 1)]
-            eLastMonst = [('Mewtwo', 1)]
+            eFirstMonst = [("Snorlax", 21)]
+            eSecondMonst = [("Dragonite", 20)]
+            eLastMonst = [("Mewtwo", 22)]
 
         # Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = [('Machamp', 0)]
-            eSecondMonst = [('Mewtwo', 1)]
-            eLastMonst = [('Gengar', 2)]
+            eFirstMonst = [("Dragonite", 20)]
+            eSecondMonst = [("Gengar", 18)]
+            eLastMonst = [("Mewtwo", 22)]
 
         # Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = [('Machamp', 0)]
-            eSecondMonst = [('Mewtwo', 1)]
-            eLastMonst = [('Gengar', 2)]
+            eFirstMonst = [("Mewtwo", 22)]
+            eSecondMonst = [("Dragonite", 20)]
+            eLastMonst = [("Mewtwo", 22)]
