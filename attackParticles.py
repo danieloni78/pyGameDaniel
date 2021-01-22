@@ -7,10 +7,10 @@ screen_height = screen_backImg + screen_panel
 
 screen = pygame.display.set_mode([screen_width, screen_height])
 
-spdList = [15, 7, 25]
-colorList = [(225, 225, 195), (55, 0, 80), (230, 100, 0)]
-radList = [30, 30, 20]
-amountList = [30, 1, 30]
+spdList = [15, 7, 25, 0, 0, 7,]
+colorList = [(225, 225, 195),  (), (230, 100, 0), (), (), (55, 0, 80),]
+radList = [30, 30, 20, 0, 0, 30,]
+amountList = [30, 1, 30, 0, 0, 1,]
 
 
 currentParticles = []

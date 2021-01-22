@@ -17,6 +17,10 @@ background = pygame.image.load("textures/background.png")
 backPanel = pygame.image.load("textures/panel.png")
 lostImg = pygame.image.load("textures/lost.png")
 wonImg = pygame.image.load("textures/win.png")
+lvlUp = pygame.image.load("textures/lvlUp.png")
+skipImg = pygame.image.load("textures/skip.png")
+evolveImg = pygame.image.load("textures/evolveMessage.png")
+
 screen_width = 1200
 screen_backImg = 600
 screen_panel = 225
@@ -30,21 +34,33 @@ losingSound = pygame.mixer.Sound("sounds/losing.wav")
 
 #Variables
 fps = 60
-firstMonst = [("Venusaur", 15)]
-secondMonst = [("Blastoise", 16)]
-lastMonst = [("Charizard", 17)]
+#firstMonst = [("Venusaur", 15)]
+#secondMonst = [("Blastoise", 16)]
+#lastMonst = [("Charizard", 17)]
+
+firstMonst = [("", 68)]
+secondMonst = [("", 69)]
+lastMonst = [("", 70)]
 
 eNumber = 0
 
-eFirstMonst = [('Bulbasaur', 0)]
-eSecondMonst = [('Squirtle', 1)]
-eLastMonst = [('Charmander', 2)]
+#eFirstMonst = [('Bulbasaur', 0)]
+#eSecondMonst = [('Squirtle', 1)]
+#eLastMonst = [('Charmander', 2)]
+
+eFirstMonst = [('', 71)]
+eSecondMonst = [('', 67)]
+eLastMonst = [('', 46)]
 
 
 #Set the amount of time the game idles after every action
 waitingAmount = 120
 
 rounds = 1
+
+gameStage = 0
+
+mbDown = False
 
 
 screen = pygame.display.set_mode([screen_width, screen_height])
@@ -57,6 +73,7 @@ def new(fM, sM, lM):
 
     global won
     global lost
+    global gameStage
     global firstMonst, secondMonst, lastMonst
 
     global eFirstMonst, eSecondMonst, eLastMonst
@@ -79,6 +96,9 @@ def new(fM, sM, lM):
 
     player.setMonsters(firstMonstNr, secondMonstNr, lastMonstNr)
     enemy.setMonsters(eFirstMonstNr, eSecondMonstNr, eLastMonstNr)
+
+    gameStage = 0
+
     starten()
 
 
@@ -89,12 +109,16 @@ def printScreen():
     screen.blit(background, (0, 0))
     screen.blit(backPanel, (0, screen_backImg))
 
+    if gameStage == 0:
+        screen.blit(evolveImg, (80, 20))
+        screen.blit(skipImg, (screen_width - 220, 20))
+
     player.printPlayerMonsters()
     enemy.printEnemyMonsters()
     for a in attackParticles.currentParticles:
         a.printAttack()
 
-    pygame.display.update()
+    #pygame.display.update()
 
 
 def inGameMenu(won):
@@ -181,11 +205,16 @@ def starten():
     global waitingAmount
     global turnOrder
     global rounds
+    global gameStage
+    global mbDown
+
     counter = 0
     waitingCounter = 0
 
     pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Battle Simulator - Round: {rounds}')
     clock = pygame.time.Clock()
+
+
 
     if random.randint(0,1) == 0:
         playerStarting = True
@@ -202,56 +231,71 @@ def starten():
 
     while go:
         for event in pygame.event.get():
+            #Close the game
             if event.type == pygame.QUIT: sys.exit()
 
-        if  waitingCounter > waitingAmount:
-
-            if counter >= length:
-                counter = 0
-
-            if player.isAttacking() == False:
-
-                if enemy.isAttacking() == False:
-
-                    #If the turning monster is dead skip to the next of the team if there still is one
-                    while turnOrder[counter].isDead() and not player.isDead() and not enemy.isDead():
-
-                        if counter == length-1:
-                            counter = 1
+            #Player clicked Mouse Button
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mbDown = True
+            else:
+                mbDown = False
 
 
-                        elif counter == length-2:
-                            counter = 0
+        #Battle Phase
+        if gameStage == 1:
+
+            # hide normal mouse
+            pygame.mouse.set_visible(False)
 
 
-                        elif turnOrder[0].isDead() and turnOrder[1].isDead() and turnOrder[3].isDead() and counter == 0:
-                            i = 0
-                            if i == 1:
-                                counter = length-2
+            if  waitingCounter > waitingAmount:
+
+                if counter >= length:
+                    counter = 0
+
+                if player.isAttacking() == False:
+
+                    if enemy.isAttacking() == False:
+
+                        #If the turning monster is dead skip to the next of the team if there still is one
+                        while turnOrder[counter].isDead() and not player.isDead() and not enemy.isDead():
+
+                            if counter == length-1:
+                                counter = 1
+
+
+                            elif counter == length-2:
+                                counter = 0
+
+
+                            elif turnOrder[0].isDead() and turnOrder[1].isDead() and turnOrder[3].isDead() and counter == 0:
+                                i = 0
+                                if i == 1:
+                                    counter = length-2
+                                else:
+                                    counter = 2
+
+
                             else:
-                                counter = 2
+                                counter += 2
+
+
+                        if turnOrder[counter].player:
+                            target = enemy.getNextTarget()
 
 
                         else:
-                            counter += 2
+                            target = player.getNextTarget()
 
 
-                    if turnOrder[counter].player:
-                        target = enemy.getNextTarget()
-
-
-                    else:
-                        target = player.getNextTarget()
-
-
-                    turnOrder[counter].attack(target)
-                    counter += 1
-                    waitingCounter = 0
+                        turnOrder[counter].attack(target)
+                        counter += 1
+                        waitingCounter = 0
 
 
 
 
-
+            waitingCounter += 1
 
 
 
@@ -278,10 +322,65 @@ def starten():
             rounds += 1
             inGameMenu(True)
 
+
         attackParticles.hanldeAttacks()
         printScreen()
 
-        waitingCounter += 1
+        if gameStage == 0:
+
+
+            skipButton = pygame.Rect(screen_width-220, 20, 200, 100)
+
+            #show mouse
+            pygame.mouse.set_visible(True)
+
+            #get mouse position
+            mousePos = pygame.mouse.get_pos()
+
+            #if mouse is on one of the players monsters
+            for pMonst in player.monsterList:
+
+                if pMonst.evolvesTo != -1:
+
+                    if pMonst.rect.collidepoint(mousePos):
+
+                        #hide normal mouse
+                        pygame.mouse.set_visible(False)
+
+                        #Show LVL Up symbol
+                        screen.blit(lvlUp, mousePos)
+
+
+                        #Player clicked on the monster
+                        if mbDown:
+
+                            #Try to evolve the monster
+                            selectedMonst = pMonst.evolve()
+
+                            #Monster could be evolved
+                            if selectedMonst:
+
+                                gameStage = 1
+
+
+            if skipButton.collidepoint(mousePos):
+
+                #set cursor to a hand
+                pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+                # Player clicked on the Button
+                if mbDown:
+
+                    #Player wants to skip
+                    gameStage = 1
+
+            else:
+                #set normal cursor
+                pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+        pygame.display.update()
+
+
 
 
 
