@@ -32,18 +32,18 @@ deadRender = font.render("DEAD", True, (255, 255, 255))
 monstData = [[0, "Bulbasaur", 0,    6,      1,      3,          9],
              [1, "Squirtle",  0,    6,      1,      1,          10],
              [2, "Charmander",0,    5,      2,      2,          11],
-             [3, "Pikachu",   2,    5,      2,      4,          8],
-             [4, "Gastly",    2,    4,      2,      5,          12],
-             [5, "Machop",    0,    6,      1,      8,          13],
-             [6, "Dratini",   0,    4,      1,      9,          14],
-             [7, "Eevee",     2,    6,      1,      0,          -2],
-             [8, "Raichu",    2,    14,     4,      4,          -1],
-             [9, "Venusaur",  0,    9,      3,      3,          15],
-             [10, "Wartortle", 0,   9,      3,      1,          16],
+             [3, "Pikachu",   2,    5,      3,      4,          8],
+             [4, "Gastly",    2,    4,      3,      5,          12],
+             [5, "Machop",    0,    7,      2,      8,          13],
+             [6, "Dratini",   0,    6,      2,      9,          14],
+             [7, "Eevee",     2,    6,      2,      0,          -2],
+             [8, "Raichu",    2,    12,     4,      4,          -1],
+             [9, "Venusaur",  0,    12,      3,      3,          15],
+             [10, "Wartortle", 0,   12,      3,      1,          16],
              [11, "Charmeleon", 0,  8,      4,      2,          17],
-             [12, "Haunter",    2,  7,      4,      5,          18],
+             [12, "Haunter",    2,  7,      5,      5,          18],
              [13, "Machoke",    0,  9,      4,      8,          19],
-             [14, "Dragonair",  0,  7,      3,      9,          20],
+             [14, "Dragonair",  0,  7,      5,      9,          20],
              [15, "Ivysaur",    0,  20,     7,      3,          -1],
              [16, "Blastoise",  0,  19,     7,      1,          -1],
              [17, "Charizard",  2,  18,     8,      2,          -1],
@@ -52,16 +52,16 @@ monstData = [[0, "Bulbasaur", 0,    6,      1,      3,          9],
              [20, "Dragonite",  0,  27,     11,     9,          -1],
              [21, "Snorlax",    0,  26,     7,      0,          -1],
              [22, "Mewtwo",     2,  30,     12,     5,          -1],
-             [23, "Vaporeon",   0,  16,     4,      1,          -1],
-             [24, "Jolteon",    0,  15,     5,      4,          -1],
-             [25, "Flareon",    0,  14,     6,      2,          -1],
-             [26, "Aerodactyl", 0,  17,     6,      7,          -1],
-             [27, "Electabuzz", 0,  14,     6,      4,          -1],
-             [28, "Magmar",     0,  14,     6,      2,          -1],
-             [29, "Abra",       2,  4,      1,      5,          30],
+             [23, "Vaporeon",   0,  12,     4,      1,          -1],
+             [24, "Jolteon",    0,  10,     5,      4,          -1],
+             [25, "Flareon",    0,  11,     5,      2,          -1],
+             [26, "Aerodactyl", 0,  9,      3,      7,          -1],
+             [27, "Electabuzz", 0,  9,      3,      4,          -1],
+             [28, "Magmar",     0,  9,      3,      2,          -1],
+             [29, "Abra",       2,  4,      2,      5,          30],
              [30, "Kadabra",    2,  8,      6,      5,          31],
              [31, "Alakazam",   2,  14,     10,     5,          -1],
-             [32, "Weedle",     0,  4,      1,      3,          33],
+             [32, "Weedle",     0,  4,      2,      3,          33],
              [33, "Kakuna",     0,  8,      2,      3,          34],
              [34, "Beedrill",   2,  18,     7,      3,          -1],
              [35, "Magikarp",   0,  5,      0,      1,          36],
@@ -78,20 +78,20 @@ monstData = [[0, "Bulbasaur", 0,    6,      1,      3,          9],
              [46, "Scyther",    2,  14,     8,      3,          -1],
              [47, "Lapras",     0,  18,     7,      1,          -1],
              [48, "Grimer",     0,  6,      1,      5,          49],
-             [49, "Muk",        0,  16,     6,      5,          -1],
+             [49, "Muk",        0,  12,     4,      5,          -1],
              [50, "Rattata",    2,  4,      2,      0,          51],
              [51, "Raticate",   2,  12,     5,      0,          -1],
              [52, "Mr. Mime",   2,  12,     6,      5,          -1],
              [53, "Rhydon",     0,  18,     7,      6,          -1],
              [54, "Growlithe",  2,  6,      2,      2,          55],
-             [55, "Arcanine",   2,  16,     7,      2,          -1],
+             [55, "Arcanine",   2,  12,     6,      2,          -1],
              [56, "Magnemite",  0,  6,      1,      4,          57],
              [57, "Magneton",   0,  14,     6,      4,          -1],
-             [58, "Poliwag",    0,  5,      1,      1,          59],
+             [58, "Poliwag",    0,  5,      2,      1,          59],
              [59, "Poliwhirl",  0,  9,      5,      1,          60],
              [60, "Poliwrath",  0,  16,     8,      1,          -1],
              [61, "Chansey",    0,  31,     4,      0,          -1],
-             [62, "Caterpie",   0,  4,      1,      3,          63],
+             [62, "Caterpie",   0,  4,      2,      3,          63],
              [63, "Metapod",    0,  8,      2,      3,          64],
              [64, "Butterfree", 0,  19,     6,      3,          -1],
              [65, "Pidgey",     2,  6,      1,      7,          66],
@@ -124,7 +124,7 @@ class monster:
             self.jump = loadTextures.loadJumpPlayer(self.select)
             self.movement = loadTextures.loadMovePlayer(self.select)
             self.special = loadTextures.loadSpecialPlayer(self.select)
-            self.speed = 5
+            self.speed = 8
             if self.moveType == 2:
                 self.speed += 5
         else:
@@ -135,6 +135,8 @@ class monster:
             self.speed = -5
             if self.moveType == 2:
                 self.speed -= 5
+        self.menuStatic = loadTextures.loadMenuStatic(self.select)
+        self.menuMoving = loadTextures.loadMenuMoving(self.select)
         self.hp = monstData[self.select][3]
         self.maxHp = monstData[self.select][3]
         self.dmg = monstData[self.select][4]
@@ -149,6 +151,7 @@ class monster:
         self.staticTics = 0
         self.steps = 0
         self.specialTics = 0
+        self.menuTics = 0
         self.inJump = False
         self.jumpVar = -15
         self.action = 0
@@ -319,6 +322,7 @@ class monster:
     #Chose the Attack Type
     def attack(self, target):
 
+
         self.posX = self.basePosX
         self.posY = self.basePosY
         self.target.posX = self.target.basePosX
@@ -331,10 +335,10 @@ class monster:
             if self.moveType == 0:
                 self.meleeAtt()
 
-            if self.moveType == 1:
+            elif self.moveType == 1:
                 self.rangedAtt()
 
-            if self.moveType == 2:
+            elif self.moveType == 2:
                 self.assassinAttack()
 
 
@@ -353,6 +357,7 @@ class monster:
             self.jumping()
         else:
             self.meleeAtt()
+
 
 
     def jumping(self):
@@ -378,19 +383,22 @@ class monster:
     def calcDamage(self):
 
         #set default Attack Multiplicator
-        multiplicator = 1
+        if self.moveType == 1:
+            multiplicator = 1.5
+        else:
+            multiplicator = 1
 
         for aType in self.effectiveAgainst:
 
             #Is the monster effective against the target
             if aType == self.target.monstType:
-                multiplicator = 2
+                multiplicator *= 2
 
         for targetaType in self.target.effectiveAgainst:
 
             #Is the target effective against the monster
             if targetaType == self.monstType:
-                multiplicator = 0.5
+                multiplicator *= 0.5
 
         self.target.hp = self.target.hp - (self.dmg * multiplicator)
         self.target.hpRendeer = font.render(f'HP: {int(self.target.hp*10)} / {int(self.target.maxHp*10)}', True, (255, 255 ,255))
@@ -428,7 +436,7 @@ class monster:
 
             else:
 
-                self.__init__(24, self.player, self.basePosX, self.basePosY)
+                self.__init__(25, self.player, self.basePosX, self.basePosY)
 
             success = True
 
@@ -437,5 +445,283 @@ class monster:
 
             self.__init__(self.evolvesTo, self.player, self.basePosX, self.basePosY)
             success = True
+
+        return success
+
+
+    def printMenu(self, moving, x, y):
+
+        self.width = 100
+        self.height = 100
+
+        # 40 // 10 = 4 <- Out of Range
+        if self.menuTics >= 39:
+            self.menuTics = 0
+
+        self.rect = pygame.Rect(x+20, y+30, self.width-40, self.height-30)
+        #pygame.draw.rect(screen, (255, 0, 0), self.rect, 7)
+
+
+        if moving:
+            # Print The monster
+            screen.blit(self.menuMoving[self.menuTics // 10], (x, y))
+            self.menuTics += 1
+
+
+
+        else:
+            # Print The monster
+            screen.blit(self.menuStatic, (x, y))
+
+
+    def turnSpecialAttacker(self):
+        self.moveType = 1
+        if self.dmg == 0:
+            self.dmg = 0.5
+
+
+    def switchRandom(self, rounds):
+
+        success = False
+
+        if rounds == 5:
+            ran = random.randint(0,100)
+
+            if  ran < 20:
+
+                self.__init__(46, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 20 <= ran < 40:
+
+                self.__init__(52, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 40 <= ran < 50:
+
+                self.__init__(47, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 50 <= ran < 60:
+
+                self.__init__(57, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 60 <= ran < 65:
+
+                self.__init__(61, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 65 <= ran < 70:
+
+                self.__init__(60, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 70 <= ran < 75:
+
+                self.__init__(49, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 75 <= ran < 80:
+
+                self.__init__(21, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 80 <= ran < 85:
+
+                self.__init__(18, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 85 <= ran < 90:
+
+                self.__init__(34, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 90 <= ran < 95:
+
+                self.__init__(64, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 95:
+
+                self.__init__(68, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 96:
+
+                self.__init__(69, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 97:
+
+                self.__init__(70, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 98:
+
+                self.__init__(71, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 99:
+
+                self.__init__(22, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 100:
+
+                self.__init__(35, self.player, self.basePosX, self.basePosY)
+                success = True
+
+        elif rounds == 7:
+            ran = random.randint(0, 100)
+
+            if ran < 20:
+
+                self.__init__(61, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 20 <= ran < 40:
+
+                self.__init__(21, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 40 <= ran < 50:
+
+                self.__init__(47, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 50 <= ran < 60:
+
+                self.__init__(42, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 60 <= ran < 65:
+
+                self.__init__(46, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 65 <= ran < 70:
+
+                self.__init__(60, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 70 <= ran < 75:
+
+                self.__init__(49, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 75 <= ran < 80:
+
+                self.__init__(52, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 80 <= ran < 85:
+
+                self.__init__(18, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 85 <= ran < 90:
+
+                self.__init__(34, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 90 <= ran < 95:
+
+                self.__init__(64, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 95:
+
+                self.__init__(68, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 96:
+
+                self.__init__(69, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 97:
+
+                self.__init__(70, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 98:
+
+                self.__init__(71, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 99:
+
+                self.__init__(22, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 100:
+
+                self.__init__(35, self.player, self.basePosX, self.basePosY)
+                success = True
+
+        elif rounds > 7:
+            ran = random.randint(0, 100)
+
+            if ran < 10:
+
+                self.__init__(61, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 10 <= ran < 20:
+
+                self.__init__(21, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 20 <= ran < 30:
+
+                self.__init__(47, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 30 <= ran < 40:
+
+                self.__init__(42, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 40 <= ran < 50:
+
+                self.__init__(68, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 50 <= ran < 60:
+
+                self.__init__(69, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 60 <= ran < 70:
+
+                self.__init__(70, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 70 <= ran < 75:
+
+                self.__init__(71, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 75 <= ran < 80:
+
+                self.__init__(22, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 80 <= ran < 90:
+
+                self.__init__(39, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif 90 <= ran < 100:
+
+                self.__init__(36, self.player, self.basePosX, self.basePosY)
+                success = True
+
+            elif ran == 100:
+
+                self.__init__(35, self.player, self.basePosX, self.basePosY)
+                success = True
+
 
         return success

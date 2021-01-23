@@ -18,11 +18,20 @@ m2PosY = 380
 m3PosX = 25
 m3PosY = 380
 
+currentlyAttacking = 0
+
+doubleAttacker = 2
+doubleAttacking = False
 
 def setMonsters(firstMon, secMon, thirdMon):
 
     global monsterList
     global m1PosX, m1PosY, m2PosX, m2PosY, m3PosX, m3PosY
+    global  currentlyAttacking, doubleAttacking, doubleAttacker
+
+    currentlyAttacking = 0
+    doubleAttacker = 2
+    doubleAttacking = False
 
     monster1 = monsters.monster(firstMon, True, m1PosX, m1PosY)
     monster2 = monsters.monster(secMon, True, m2PosX, m2PosY)
@@ -77,3 +86,43 @@ def getNextTarget():
         target = monsterList[2]
 
     return target
+
+def attack(target):
+
+    global monsterList
+    global currentlyAttacking
+
+    if doubleAttacking:
+        if currentlyAttacking >= 4:
+            currentlyAttacking = 0
+    else:
+        if currentlyAttacking >= 3:
+            currentlyAttacking = 0
+
+    #Normal attacks
+    if currentlyAttacking < 3:
+        if monsterList[0].hp <= 0 and currentlyAttacking == 0:
+            if monsterList[1].hp > 0:
+                currentlyAttacking = 1
+            else:
+                currentlyAttacking = 2
+
+        elif monsterList[0].hp <= 0 and monsterList[1].hp <= 0 and currentlyAttacking == 1:
+            currentlyAttacking = 2
+
+        monsterList[currentlyAttacking].attack(target)
+
+    #Special Attack turn
+    elif currentlyAttacking == 3:
+        monsterList[doubleAttacker].attack(target)
+
+    currentlyAttacking += 1
+
+def restore():
+    for m in monsterList:
+        m.hp = m.maxHp
+
+def setDoubleAttacker(number):
+    global doubleAttacker, doubleAttacking
+    doubleAttacker = number
+    doubleAttacking = True

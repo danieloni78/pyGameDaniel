@@ -1,12 +1,11 @@
 import pygame
-import pygame_menu
 import player
 import enemy
 import attackParticles
 import sys
 import random
 import time
-
+import menus
 
 
 
@@ -20,6 +19,23 @@ wonImg = pygame.image.load("textures/win.png")
 lvlUp = pygame.image.load("textures/lvlUp.png")
 skipImg = pygame.image.load("textures/skip.png")
 evolveImg = pygame.image.load("textures/evolveMessage.png")
+startImg = pygame.image.load("textures/start.png")
+selectGreyImg = pygame.image.load("textures/selectGrey.png")
+selectYellowImg = pygame.image.load("textures/selectYellow.png")
+startGreyImg = pygame.image.load("textures/startGrey.png")
+resetImg = pygame.image.load("textures/reset.png")
+lockImg = pygame.image.load("textures/locked.png")
+num1img = pygame.image.load("textures/1.png")
+num2img = pygame.image.load("textures/2.png")
+num3img = pygame.image.load("textures/3.png")
+pwrUp = pygame.image.load("textures/pwrUp.png")
+tradeImg = pygame.image.load("textures/trade.png")
+exitButton = pygame.image.load("textures/exit.png")
+
+tradeInMessage = pygame.image.load("textures/tradeInMsg.png")
+powerUpMsg = pygame.image.load("textures/powerUpMsg.png")
+
+
 
 screen_width = 1200
 screen_backImg = 600
@@ -34,23 +50,18 @@ losingSound = pygame.mixer.Sound("sounds/losing.wav")
 
 #Variables
 fps = 60
-#firstMonst = [("Venusaur", 15)]
-#secondMonst = [("Blastoise", 16)]
-#lastMonst = [("Charizard", 17)]
 
-firstMonst = [("", 68)]
-secondMonst = [("", 69)]
-lastMonst = [("", 70)]
+#Player's Monster Selection
+firstMonstNr = 0
+secondMonstNr = 0
+lastMonstNr = 0
 
-eNumber = 0
+difficulty = 0
 
-#eFirstMonst = [('Bulbasaur', 0)]
-#eSecondMonst = [('Squirtle', 1)]
-#eLastMonst = [('Charmander', 2)]
-
-eFirstMonst = [('', 71)]
-eSecondMonst = [('', 67)]
-eLastMonst = [('', 46)]
+#Enemy's monster selection
+eFirstMonstNr = 0
+eSecondMonstNr = 0
+eLastMonstNr = 0
 
 
 #Set the amount of time the game idles after every action
@@ -60,7 +71,7 @@ rounds = 1
 
 gameStage = 0
 
-mbDown = False
+
 
 
 screen = pygame.display.set_mode([screen_width, screen_height])
@@ -68,36 +79,25 @@ screen = pygame.display.set_mode([screen_width, screen_height])
 turnOrder = []
 
 
-def new(fM, sM, lM):
+def new():
 
 
     global won
     global lost
     global gameStage
-    global firstMonst, secondMonst, lastMonst
+    global firstMonstNr, secondMonstNr, lastMonstNr
 
-    global eFirstMonst, eSecondMonst, eLastMonst
+    global eFirstMonstNr, eSecondMonstNr, eLastMonstNr
 
 
     won = False
     lost = False
 
-    firstMonst = fM
-    firstMonstNr = fM[0][1]
-    eFirstMonstNr = eFirstMonst[0][1]
-
-    secondMonst = sM
-    secondMonstNr = sM[0][1]
-    eSecondMonstNr = eSecondMonst[0][1]
-
-    lastMonst = lM
-    lastMonstNr = lM[0][1]
-    eLastMonstNr = eLastMonst[0][1]
 
     player.setMonsters(firstMonstNr, secondMonstNr, lastMonstNr)
     enemy.setMonsters(eFirstMonstNr, eSecondMonstNr, eLastMonstNr)
 
-    gameStage = 0
+    gameStage = 1
 
     starten()
 
@@ -113,6 +113,13 @@ def printScreen():
         screen.blit(evolveImg, (80, 20))
         screen.blit(skipImg, (screen_width - 220, 20))
 
+    if gameStage == 1:
+        screen.blit(powerUpMsg, (80, 20))
+
+    if gameStage == 3:
+        screen.blit(tradeInMessage, (80, 20))
+        screen.blit(skipImg, (screen_width - 220, 20))
+
     player.printPlayerMonsters()
     enemy.printEnemyMonsters()
     for a in attackParticles.currentParticles:
@@ -121,115 +128,41 @@ def printScreen():
     #pygame.display.update()
 
 
-def inGameMenu(won):
-
-
-
-    if won:
-        pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Battle Simulator - Round: {rounds}')
-        setEnemy(eNumber)
-        gameMenu = pygame_menu.Menu(700, 1000, 'You have won.', theme=pygame_menu.themes.THEME_BLUE)
-        gameMenu.add_selector('First Monster: ',
-                              [("Venusaur", 15), ('Bulbasaur (Melee)', 0), ('Squirtle (Melee)', 1), ('Charmander (Ranged)', 2),
-                               ("Pikachu (Assassin)",3), ("Gastly (Assassin)", 4),("Machop (Melee)",5),
-                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
-                               ("Haunter", 12),("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
-                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
-                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
-                              onchange=set_firtMon)
-
-        gameMenu.add_selector('Second Monster: ',
-                              [("Blastoise", 16), ('Squirtle (Melee)', 1), ('Bulbasaur (Melee)', 0),
-                               ('Charmander (Ranged)', 2),
-                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
-                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
-                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
-                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
-                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
-                              onchange=set_secMon)
-
-        gameMenu.add_selector('Last Monster: ',
-                              [("Charizard", 17), ('Charmander (Ranged)', 2), ('Bulbasaur (Melee)', 0),
-                               ('Squirtle (Melee)', 1),
-                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
-                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
-                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
-                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
-                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
-                              onchange=set_lastMon)
-
-        gameMenu.add_button('Next Enemy', startGame)
-        gameMenu.add_button('Quit', pygame_menu.events.EXIT)
-
-        gameMenu.mainloop(screen)
-
-    else:
-        init_Enemy(None, eNumber)
-        gameMenu = pygame_menu.Menu(700, 1000, 'You have lost.', theme=pygame_menu.themes.THEME_BLUE)
-        gameMenu.add_selector('First Monster: ',
-                              [("Venusaur", 15), ('Bulbasaur (Melee)', 0), ('Squirtle (Melee)', 1),
-                               ('Charmander (Ranged)', 2),
-                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
-                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
-                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
-                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
-                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
-                              onchange=set_firtMon)
-
-        gameMenu.add_selector('Second Monster: ',
-                              [("Blastoise", 16), ('Squirtle (Melee)', 1), ('Bulbasaur (Melee)', 0),
-                               ('Charmander (Ranged)', 2),
-                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
-                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
-                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
-                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
-                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
-                              onchange=set_secMon)
-
-        gameMenu.add_selector('Last Monster: ',
-                              [("Charizard", 17), ('Charmander (Ranged)', 2), ('Bulbasaur (Melee)', 0),
-                               ('Squirtle (Melee)', 1),
-                               ("Pikachu (Assassin)", 3), ("Gastly (Assassin)", 4), ("Machop (Melee)", 5),
-                               ("Dratini", 6), ("Ivysaur", 9), ("Wartortle", 10), ("Charmeleon", 11),
-                               ("Haunter", 12), ("Machoke", 13), ("Dragonair", 14), ("Venusaur", 15),
-                               ("Blastoise", 16), ("Charizard", 17), ("Gengar", 18), ("Machamp", 19),
-                               ("Dragonite", 20), ("Snorlax", 21), ("Mewtwo", 22)],
-                              onchange=set_lastMon)
-        gameMenu.add_button('Try Again', startGame)
-        gameMenu.add_button('Quit', pygame_menu.events.EXIT)
-
-        gameMenu.mainloop(screen)
-
 
 def starten():
     global waitingAmount
     global turnOrder
     global rounds
     global gameStage
-    global mbDown
 
-    counter = 0
+    mbDown = False
+
+    gameStage = 1
+
     waitingCounter = 0
 
-    pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Battle Simulator - Round: {rounds}')
+
     clock = pygame.time.Clock()
 
-
+    player.setMonsters(firstMonstNr, secondMonstNr, lastMonstNr)
+    enemy.setMonsters(eFirstMonstNr, eSecondMonstNr, eLastMonstNr)
 
     if random.randint(0,1) == 0:
-        playerStarting = True
-        turnOrder = [player.monsterList[0], enemy.monsterList[0], player.monsterList[1], enemy.monsterList[1], player.monsterList[2], enemy.monsterList[2]]
+        playerTurn = 0
 
     else:
-        playerStarting = False
-        turnOrder = [enemy.monsterList[0], player.monsterList[0], enemy.monsterList[1], player.monsterList[1], enemy.monsterList[2], player.monsterList[2]]
+        playerTurn = 1
 
-    target = turnOrder[1]
 
-    length = len(turnOrder)
+
     go = True
 
+
+
     while go:
+
+        pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Battle Simulator - Round: {rounds}')
+
         for event in pygame.event.get():
             #Close the game
             if event.type == pygame.QUIT: sys.exit()
@@ -240,9 +173,89 @@ def starten():
             else:
                 mbDown = False
 
+        attackParticles.hanldeAttacks()
+        printScreen()
+
+        if playerTurn > 1:
+            playerTurn = 0
+
+        if player.isDead():
+            #go = False
+            screen.fill((100,100,100))
+            screen.blit(lostImg, (350, 165))
+            pygame.display.update()
+            pygame.mixer.Sound.play(losingSound)
+            time.sleep(3)
+            menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
+
+        elif enemy.isDead():
+            #go = False
+            screen.fill((200,200,200))
+            screen.blit(wonImg, (350, 165))
+            pygame.display.update()
+            pygame.mixer.Sound.play(winningSound)
+            time.sleep(3)
+            rounds += 1
+            gameStage = 3
+            set_Enemy(difficulty)
+            player.restore()
+            enemy.restore()
+
+        #Switch Monster (random)
+        elif gameStage == 3:
+
+            if rounds >= 5 and rounds % 2 != 0:
+                sButton = pygame.Rect(screen_width - 220, 20, 200, 100)
+
+                # show mouse
+                pygame.mouse.set_visible(True)
+
+                # get mouse position
+                mousePos = pygame.mouse.get_pos()
+
+                # if mouse is on one of the players monsters
+                for pMonst in player.monsterList:
+
+                    if pMonst.rect.collidepoint(mousePos):
+
+                        # hide normal mouse
+                        pygame.mouse.set_visible(False)
+
+                        # Show LVL Up symbol
+                        screen.blit(tradeImg, mousePos)
+
+                        # Player clicked on the monster
+                        if mbDown:
+
+                            # Try to evolve the monster
+                            selectedMonst = pMonst.switchRandom(rounds)
+
+                            # Monster could be evolved
+                            if selectedMonst:
+                                gameStage = 1
+                                menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
+
+                if sButton.collidepoint(mousePos):
+
+                    # set cursor to a hand
+                    pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+                    # Player clicked on the Button
+                    if mbDown:
+                        # Player wants to skip
+                        gameStage = 1
+                        menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
+
+                else:
+                    # set normal cursor
+                    pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+            else:
+                gameStage = 0
+
 
         #Battle Phase
-        if gameStage == 1:
+        if gameStage == 2:
 
             # hide normal mouse
             pygame.mouse.set_visible(False)
@@ -250,83 +263,52 @@ def starten():
 
             if  waitingCounter > waitingAmount:
 
-                if counter >= length:
-                    counter = 0
-
                 if player.isAttacking() == False:
 
                     if enemy.isAttacking() == False:
 
-                        #If the turning monster is dead skip to the next of the team if there still is one
-                        while turnOrder[counter].isDead() and not player.isDead() and not enemy.isDead():
-
-                            if counter == length-1:
-                                counter = 1
-
-
-                            elif counter == length-2:
-                                counter = 0
-
-
-                            elif turnOrder[0].isDead() and turnOrder[1].isDead() and turnOrder[3].isDead() and counter == 0:
-                                i = 0
-                                if i == 1:
-                                    counter = length-2
-                                else:
-                                    counter = 2
-
-
-                            else:
-                                counter += 2
-
-
-                        if turnOrder[counter].player:
+                        if playerTurn == 0:
                             target = enemy.getNextTarget()
-
-
-                        else:
+                            player.attack(target)
+                        elif playerTurn == 1:
                             target = player.getNextTarget()
+                            enemy.attack(target)
 
-
-                        turnOrder[counter].attack(target)
-                        counter += 1
+                        playerTurn += 1
                         waitingCounter = 0
-
-
-
 
             waitingCounter += 1
 
+        #Choose special Attacker
+        elif gameStage == 1:
 
+            #show mouse
+            pygame.mouse.set_visible(True)
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
-        clock.tick(fps)
+            #get mouse position
+            mousePos = pygame.mouse.get_pos()
 
-        if player.isDead():
-            go = False
-            screen.fill((100,100,100))
-            screen.blit(lostImg, (350, 165))
-            pygame.display.update()
-            pygame.mixer.Sound.play(losingSound)
-            time.sleep(3)
-            rounds = 0
-            inGameMenu(False)
+            #if mouse is on one of the players monsters
+            for pMonst in player.monsterList:
 
+                if pMonst.rect.collidepoint(mousePos):
 
-        if enemy.isDead():
-            go = False
-            screen.fill((200,200,200))
-            screen.blit(wonImg, (350, 165))
-            pygame.display.update()
-            pygame.mixer.Sound.play(winningSound)
-            time.sleep(3)
-            rounds += 1
-            inGameMenu(True)
+                    #hide normal mouse
+                    pygame.mouse.set_visible(False)
 
+                    #Show LVL Up symbol
+                    screen.blit(pwrUp, mousePos)
 
-        attackParticles.hanldeAttacks()
-        printScreen()
+                    #Player clicked on the monster
+                    if mbDown:
 
-        if gameStage == 0:
+                        pMonst.turnSpecialAttacker()
+                        enemy.monsterList[2].turnSpecialAttacker()
+                        gameStage = 2
+
+        #Evolve Monster
+        elif gameStage == 0:
 
 
             skipButton = pygame.Rect(screen_width-220, 20, 200, 100)
@@ -361,6 +343,8 @@ def starten():
                             if selectedMonst:
 
                                 gameStage = 1
+                                menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
+
 
 
             if skipButton.collidepoint(mousePos):
@@ -373,53 +357,54 @@ def starten():
 
                     #Player wants to skip
                     gameStage = 1
+                    menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
 
             else:
                 #set normal cursor
                 pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
+
+        clock.tick(fps)
         pygame.display.update()
 
 
+def set_firstMon(monster, number):
+    global firstMonstNr
+    firstMonstNr = number
 
-
-
-
-
-def set_firtMon(monster, number):
-    global firstMonst
-    firstMonst = monster
+    #Delete obsolete Instance
+    del monster
 
 
 def set_secMon(monster, number):
-    global secondMonst
-    secondMonst = monster
+    global secondMonstNr
+    secondMonstNr = number
+
+    #Delete obsolete Instance
+    del monster
 
 
 def set_lastMon(monster, number):
-    global lastMonst
-    lastMonst = monster
+    global lastMonstNr
+    lastMonstNr = number
+
+    #Delet Obsolete Instance
+    del monster
 
 
-def startGame():
-    new(firstMonst, secondMonst, lastMonst)
+def set_Enemy(number):
 
+    global eFirstMonstNr, eSecondMonstNr, eLastMonstNr
+    global difficulty
+    global rounds
 
-def init_Enemy(enemy, number):
-    global eNumber
-    eNumber = number
-    setEnemy(number)
-
-
-def setEnemy(number):
-
-    global eFirstMonst, eSecondMonst, eLastMonst
+    difficulty = number
 
 
 
     eRounds = rounds-1
-    if rounds > 3:
-        eRounds = random.randint(0, 2)
+    if rounds > 10:
+        eRounds = random.randint(7, 10)
 
 
     #easy
@@ -427,60 +412,207 @@ def setEnemy(number):
 
         #Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = [('Bulbasaur', 0)]
-            eSecondMonst = [('Squirtle', 1)]
-            eLastMonst = [('Charmander', 2)]
+            eFirstMonstNr = 48
+            eSecondMonstNr = 50
+            eLastMonstNr = 7
 
         #Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = [("Ivysaur", 9)]
-            eSecondMonst = [("Wartortle", 10)]
-            eLastMonst = [("Charmeleon", 11)]
+            eFirstMonstNr = 49
+            eSecondMonstNr = 50
+            eLastMonstNr = 7
 
         #Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = [("Venusaur", 15)]
-            eSecondMonst = [("Blastoise", 16)]
-            eLastMonst = [("Charizard", 17)]
+            eFirstMonstNr = 49
+            eSecondMonstNr = 51
+            eLastMonstNr = 7
+
+        # Enemy in the last Round
+        if eRounds == 3:
+            eFirstMonstNr = 49
+            eSecondMonstNr = 51
+            eLastMonstNr = 23
+
+        # Enemy in the last Round
+        if eRounds == 4:
+            eFirstMonstNr = 53
+            eSecondMonstNr = 51
+            eLastMonstNr = 23
+
+        # Enemy in the last Round
+        if eRounds == 5:
+            eFirstMonstNr = 53
+            eSecondMonstNr = 45
+            eLastMonstNr = 23
+
+        # Enemy in the last Round
+        if eRounds == 6:
+            eFirstMonstNr = 53
+            eSecondMonstNr = 45
+            eLastMonstNr = 23
+
+        # Enemy in the last Round
+        if eRounds == 7:
+            eFirstMonstNr = 19
+            eSecondMonstNr = 45
+            eLastMonstNr = 23
+
+        # Enemy in the last Round
+        if eRounds == 8:
+            eFirstMonstNr = 19
+            eSecondMonstNr = 18
+            eLastMonstNr = 23
+
+        # Enemy in the last Round
+        if eRounds == 9:
+            eFirstMonstNr = 19
+            eSecondMonstNr = 18
+            eLastMonstNr = 24
+
+        # Enemy in the last Round
+        if eRounds == 10:
+            eFirstMonstNr = 19
+            eSecondMonstNr = 18
+            eLastMonstNr = 25
+
 
     # Medium
     if number == 1:
 
         # Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = [("Machop", 5)]
-            eSecondMonst = [("Pikachu", 3)]
-            eLastMonst = [("Gastly", 4)]
+            eFirstMonstNr = 62
+            eSecondMonstNr = 5
+            eLastMonstNr = 1
 
         # Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = [("Snorlax", 21)]
-            eSecondMonst = [("Machoke", 13)]
-            eLastMonst = [("Haunter", 12)]
+            eFirstMonstNr = 63
+            eSecondMonstNr = 5
+            eLastMonstNr = 1
 
         # Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = [("Snorlax", 21)]
-            eSecondMonst = [("Machamp", 19)]
-            eLastMonst = [("Gengar", 18)]
+            eFirstMonstNr = 63
+            eSecondMonstNr = 5
+            eLastMonstNr = 10
+
+        # Enemy in the last Round
+        if eRounds == 3:
+            eFirstMonstNr = 64
+            eSecondMonstNr = 5
+            eLastMonstNr = 10
+
+        # Enemy in the last Round
+        if eRounds == 4:
+            eFirstMonstNr = 64
+            eSecondMonstNr = 13
+            eLastMonstNr = 10
+
+        # Enemy in the last Round
+        if eRounds == 5:
+            eFirstMonstNr = 64
+            eSecondMonstNr = 13
+            eLastMonstNr = 16
+
+        # Enemy in the last Round
+        if eRounds == 6:
+            eFirstMonstNr = 64
+            eSecondMonstNr = 19
+            eLastMonstNr = 16
+
+        # Enemy in the last Round
+        if eRounds == 7:
+            eFirstMonstNr = 21
+            eSecondMonstNr = 19
+            eLastMonstNr = 16
+
+        # Enemy in the last Round
+        if eRounds == 8:
+            eFirstMonstNr = 21
+            eSecondMonstNr = 19
+            eLastMonstNr = 16
+
+        # Enemy in the last Round
+        if eRounds == 9:
+            eFirstMonstNr = 21
+            eSecondMonstNr = 19
+            eLastMonstNr = 36
+
+        # Enemy in the last Round
+        if eRounds == 10:
+            eFirstMonstNr = 21
+            eSecondMonstNr = 42
+            eLastMonstNr = 36
+
 
     # Hard
     if number == 2:
 
         # Enemy in the first round
         if eRounds == 0:
-            eFirstMonst = [("Snorlax", 21)]
-            eSecondMonst = [("Dragonite", 20)]
-            eLastMonst = [("Mewtwo", 22)]
+            eFirstMonstNr = 6
+            eSecondMonstNr = 1
+            eLastMonstNr = 2
 
         # Enemy in the second Round
         if eRounds == 1:
-            eFirstMonst = [("Dragonite", 20)]
-            eSecondMonst = [("Gengar", 18)]
-            eLastMonst = [("Mewtwo", 22)]
+            eFirstMonstNr = 14
+            eSecondMonstNr = 1
+            eLastMonstNr = 2
 
         # Enemy in the last Round
         if eRounds == 2:
-            eFirstMonst = [("Mewtwo", 22)]
-            eSecondMonst = [("Dragonite", 20)]
-            eLastMonst = [("Mewtwo", 22)]
+            eFirstMonstNr = 20
+            eSecondMonstNr = 1
+            eLastMonstNr = 2
+
+        # Enemy in the last Round
+        if eRounds == 3:
+            eFirstMonstNr = 1
+            eSecondMonstNr = 11
+            eLastMonstNr = 20
+
+        # Enemy in the last Round
+        if eRounds == 4:
+            eFirstMonstNr = 10
+            eSecondMonstNr = 11
+            eLastMonstNr = 20
+
+        # Enemy in the last Round
+        if eRounds == 5:
+            eFirstMonstNr = 10
+            eSecondMonstNr = 17
+            eLastMonstNr = 20
+
+        # Enemy in the last Round
+        if eRounds == 6:
+            eFirstMonstNr = 16
+            eSecondMonstNr = 17
+            eLastMonstNr = 20
+
+        # Enemy in the last Round
+        if eRounds == 7:
+            eFirstMonstNr = 21
+            eSecondMonstNr = 17
+            eLastMonstNr = 20
+
+        # Enemy in the last Round
+        if eRounds == 8:
+            eFirstMonstNr = 61
+            eSecondMonstNr = 20
+            eLastMonstNr = 68
+
+        # Enemy in the last Round
+        if eRounds == 9:
+            eFirstMonstNr = 61
+            eSecondMonstNr = 71
+            eLastMonstNr = 22
+
+        # Enemy in the last Round
+        if eRounds == 10:
+            eFirstMonstNr = 70
+            eSecondMonstNr = 68
+            eLastMonstNr = 69
+

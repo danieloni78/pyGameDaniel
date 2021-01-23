@@ -121,3 +121,27 @@ def loadSpecialEnemy(number):
                pygame.image.load(f'textures/enemy/jump/{number}/2.png')]
 
     return e_special
+
+
+def loadMenuStatic(number):
+
+    menu_monst = pygame.image.load(f'textures/player/menu/{number}/1.png')
+
+    return menu_monst
+
+
+def loadMenuMoving(number):
+
+    if number == 26 or number == 34 or number == 46 or number == 64 or number >= 67:
+        menu_monst = [pygame.image.load(f'textures/player/menu/{number}/1.png'),
+                   pygame.image.load(f'textures/player/menu/jump/{number}/1.png'),
+                   pygame.image.load(f'textures/player/menu/{number}/2.png'),
+                   pygame.image.load(f'textures/player/menu/jump/{number}/2.png')]
+
+    else:
+        menu_monst = [pygame.image.load(f'textures/player/menu/{number}/1.png'),
+                     pygame.image.load(f'textures/player/menu/{number}/2.png'),
+                    pygame.image.load(f'textures/player/menu/{number}/1.png'),
+                    pygame.image.load(f'textures/player/menu/{number}/2.png')]
+
+    return menu_monst

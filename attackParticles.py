@@ -7,10 +7,13 @@ screen_height = screen_backImg + screen_panel
 
 screen = pygame.display.set_mode([screen_width, screen_height])
 
-spdList = [15, 7, 25, 0, 0, 7,]
-colorList = [(225, 225, 195),  (), (230, 100, 0), (), (), (55, 0, 80),]
-radList = [30, 30, 20, 0, 0, 30,]
-amountList = [30, 1, 30, 0, 0, 1,]
+
+#Most/Atk Types: 0 - Normal,     1 - Water,         2 - Fire,           3 - Grass,          4 - Electric ,      5 - Psychic,    6 - Rock,           7 - Flying,         8 - Fighting,       9 - Dragon
+spdList =       [20,                25,                  25,                  35,                25,                  15,             15,               25,                  15,                   25]
+colorList = [(225, 225, 195),   (50, 175, 255),     (230, 100, 0),      (5, 85, 15),      (240, 250, 40),     (55, 0, 80),     (85, 65, 40),    (175, 245, 240),      (120, 60, 10),       (130, 45, 255)]
+radList =       [30,                20,                  30,                   28,                25,                 30,             50,                30,                  70,                   35]
+amountList =    [50,                50,                   50,                 50,                50,                  1,             1,                50,                   1,                    50]
+form =          [0,                 0,                     0,                   2,                3,                  0,             1,                 0,                   1,                     2]
 
 
 currentParticles = []
@@ -28,12 +31,26 @@ class rangedAttack:
         self.y += 84
         self.rad = radList[type]
         self.color = colorList[type]
+        self.form = form[type]
 
     def move(self):
         self.x += self.speed
 
     def printAttack(self):
-        pygame.draw.circle(screen, self.color, (self.x, self.y), self.rad, 0)
+
+        if self.form == 0:
+            pygame.draw.circle(screen, self.color, (self.x, self.y), self.rad)
+
+        elif self.form == 1:
+            pygame.draw.rect(screen, self.color, [self.x, self.y, self.rad, self.rad/2])
+
+        elif self.form == 2:
+            pygame.draw.ellipse(screen, self.color, [self.x, self.y, self.rad, self.rad * 0.65])
+
+        elif self.form == 3:
+            pygame.draw.polygon(screen, self.color, [[self.x, self.y], [self.x, self.y + self.rad], [self.x + self.rad, self.y]])
+
+
 
 def hanldeAttacks():
     for a in currentParticles:
