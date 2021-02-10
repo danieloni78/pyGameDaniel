@@ -59,6 +59,7 @@ def isDead():
 
     if deadCounter >= 3:
         dead = True
+        monsters.resetDmgText()
 
     return dead
 

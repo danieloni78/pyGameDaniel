@@ -21,6 +21,11 @@ punchSound = pygame.mixer.Sound("sounds/punch.wav")
 font = pygame.font.SysFont(None, 30)
 deadRender = font.render("DEAD", True, (255, 255, 255))
 
+#Font and coordinates for the damage of an attack
+dmgX = 500
+dmgY = 400
+dmgRender = font.render("", True, (0,0,0))
+
 #Monster List
 
 #MoveTypes: 0 - Normal, 1 - Special, 2 - Assassin
@@ -44,14 +49,14 @@ monstData = [[0, "Bulbasaur", 0,    6,      1,      3,          9],
              [12, "Haunter",    2,  7,      5,      5,          18],
              [13, "Machoke",    0,  9,      4,      8,          19],
              [14, "Dragonair",  0,  7,      5,      9,          20],
-             [15, "Ivysaur",    0,  20,     7,      3,          -1],
-             [16, "Blastoise",  0,  19,     7,      1,          -1],
-             [17, "Charizard",  2,  18,     8,      2,          -1],
+             [15, "Ivysaur",    0,  25,     7,      3,          -1],
+             [16, "Blastoise",  0,  23,     7,      1,          -1],
+             [17, "Charizard",  2,  21,     8,      2,          -1],
              [18, "Gengar",     2,  15,     10,     5,          -1],
              [19, "Machamp",    0,  21,     7,      8,          -1],
-             [20, "Dragonite",  0,  27,     11,     9,          -1],
+             [20, "Dragonite",  0,  27,     8,     9,          -1],
              [21, "Snorlax",    0,  26,     7,      0,          -1],
-             [22, "Mewtwo",     2,  30,     12,     5,          -1],
+             [22, "Mewtwo",     2,  25,     12,     5,          -1],
              [23, "Vaporeon",   0,  12,     4,      1,          -1],
              [24, "Jolteon",    0,  10,     5,      4,          -1],
              [25, "Flareon",    0,  11,     5,      2,          -1],
@@ -60,18 +65,18 @@ monstData = [[0, "Bulbasaur", 0,    6,      1,      3,          9],
              [28, "Magmar",     0,  9,      3,      2,          -1],
              [29, "Abra",       2,  4,      2,      5,          30],
              [30, "Kadabra",    2,  8,      6,      5,          31],
-             [31, "Alakazam",   2,  14,     10,     5,          -1],
+             [31, "Alakazam",   2,  14,     11,     5,          -1],
              [32, "Weedle",     0,  4,      2,      3,          33],
              [33, "Kakuna",     0,  8,      2,      3,          34],
              [34, "Beedrill",   2,  18,     7,      3,          -1],
              [35, "Magikarp",   0,  5,      0,      1,          36],
-             [36, "Gyarados",   0,  25,     10,     1,          -1],
+             [36, "Gyarados",   0,  25,     8,     1,          -1],
              [37, "Geodude",    0,  6,      1,      6,          38],
              [38, "Graveler",   0,  10,     4,      6,          39],
              [39, "Golem",      0,  25,     7,      6,          -1],
              [40, "Nidoran",    0,  5,      2,      9,          41],
              [41, "Nidorino",   0,  9,      4,      9,          42],
-             [42, "Nidoking",   0,  25,     10,     9,          -1],
+             [42, "Nidoking",   0,  25,     8,     9,          -1],
              [43, "Bellsprout", 0,  5,      1,      3,          44],
              [44, "Weepinbell", 0,  8,      3,      3,          45],
              [45, "Victreebel", 0,  15,     7,      3,          -1],
@@ -97,10 +102,10 @@ monstData = [[0, "Bulbasaur", 0,    6,      1,      3,          9],
              [65, "Pidgey",     2,  6,      1,      7,          66],
              [66, "Pidgeotto",  2,  9,      5,      7,          67],
              [67, "Pidgeot",    2,  16,     8,      7,          -1],
-             [68, "Articuno",   0,  28,     11,     1,          -1],
-             [69, "Moltres",    0,  28,     11,     2,          -1],
-             [70, "Zapdos",     0,  28,     11,     4,          -1],
-             [71, "Mew",        0,  27,     10,     5,          -1]
+             [68, "Articuno",   0,  24,     10,     1,          -1],
+             [69, "Moltres",    0,  24,     10,     2,          -1],
+             [70, "Zapdos",     0,  24,     10,     4,          -1],
+             [71, "Mew",        0,  24,     9,     5,          -1]
 
              ]
 
@@ -171,7 +176,13 @@ class monster:
         global counter
         global counter2
         global deadRender
+        global dmgX, dmgY
 
+        #print the dmg
+        screen.blit(dmgRender, (dmgX, dmgY))
+
+        #let the dmg fade away
+        dmgY -= 0.1
 
         # 40 // 10 = 4 <- Out of Range
         if self.staticTics >= 39:
@@ -382,25 +393,51 @@ class monster:
     #Calculate the damage against target HP
     def calcDamage(self):
 
+        global dmgRender
+        global dmgX, dmgY
+
+        dmgX = self.target.basePosX
+        dmgY = 400
+
+        critical = random.randint(0,9)
+        crit = ''
+        effective = ''
+
         #set default Attack Multiplicator
         if self.moveType == 1:
             multiplicator = 1.5
         else:
             multiplicator = 1
 
+        #10% Chance to crit (do double dmg)
+        if critical == 0:
+            multiplicator *= 1.5
+            crit = 'CRITICAL HIT!'
+
+
         for aType in self.effectiveAgainst:
 
             #Is the monster effective against the target
             if aType == self.target.monstType:
                 multiplicator *= 2
+                effective = 'SUPER EFFECTIVE!'
 
         for targetaType in self.target.effectiveAgainst:
 
             #Is the target effective against the monster
-            if targetaType == self.monstType:
+            # (Dragon is effective against Dragon so it has to be checked if the types are equal)
+            if targetaType == self.monstType and self.target.monstType != self.monstType:
                 multiplicator *= 0.5
+                effective = 'Not very effective...'
 
-        self.target.hp = self.target.hp - (self.dmg * multiplicator)
+        damage = self.dmg * multiplicator
+
+
+        dmgString = f'- {int(damage*10)} HP... {effective} {crit}'
+        dmgRender = font.render(dmgString, True, (255, 0, 0))
+
+        #subtract the dmg from the targets hp
+        self.target.hp = self.target.hp - damage
         self.target.hpRendeer = font.render(f'HP: {int(self.target.hp*10)} / {int(self.target.maxHp*10)}', True, (255, 255 ,255))
 
 
@@ -449,6 +486,7 @@ class monster:
         return success
 
 
+    #Print monsters in the menu
     def printMenu(self, moving, x, y):
 
         self.width = 100
@@ -476,10 +514,13 @@ class monster:
 
     def turnSpecialAttacker(self):
         self.moveType = 1
+
+        #Magickarp
         if self.dmg == 0:
             self.dmg = 0.5
 
 
+    #Switch to a ranom monster (wondertrade)
     def switchRandom(self, rounds):
 
         success = False
@@ -725,3 +766,8 @@ class monster:
 
 
         return success
+
+
+def resetDmgText():
+    global dmgRender
+    dmgRender = font.render("", True, (0, 0, 0))

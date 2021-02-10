@@ -4,12 +4,12 @@ import pygame
 
 
 
-def print_transparent(target, source, location, opacity):
-    x_temp = location[0]
-    y_temp = location[1]
-    temp = pygame.Surface((source.get_width(), source.get_height())).convert()
-    temp.blit(target, (-x_temp, -y_temp))
-    temp.blit(source, (0, 0))
-    temp.set_alpha(opacity)
-    target.blit(temp, location)
+def print_transparent(screen, image, coordinates, opacity):
+    x_temp = coordinates[0]
+    y_temp = coordinates[1]
+    tempImg = pygame.Surface((image.get_width(), image.get_height())).convert()
+    tempImg.blit(screen, (-x_temp, -y_temp))
+    tempImg.blit(image, (0, 0))
+    tempImg.set_alpha(opacity)
+    screen.blit(tempImg, coordinates)
 

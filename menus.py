@@ -4,11 +4,16 @@ import monsters
 import myGame
 import copy
 
+#Setup screen size
 screen_width = 1200
 screen_backImg = 600
 screen_panel = 225
 screen_height = screen_backImg + screen_panel
 
+#load font
+font = pygame.font.SysFont(None, 30)
+
+#Load menu textures
 skipImg = pygame.image.load("textures/skip.png")
 startImg = pygame.image.load("textures/start.png")
 selectGreyImg = pygame.image.load("textures/selectGrey.png")
@@ -16,9 +21,37 @@ selectYellowImg = pygame.image.load("textures/selectYellow.png")
 startGreyImg = pygame.image.load("textures/startGrey.png")
 resetImg = pygame.image.load("textures/reset.png")
 lockImg = pygame.image.load("textures/locked.png")
-num1img = pygame.image.load("textures/1.png")
-num2img = pygame.image.load("textures/2.png")
-num3img = pygame.image.load("textures/3.png")
+
+oneImage = pygame.image.load("textures/1.png")
+twoImage = pygame.image.load("textures/2.png")
+threeImage = pygame.image.load("textures/3.png")
+
+
+bronzeText = font.render("BRONZE", True, (0, 0, 0))
+silverText = font.render("SILVER", True, (0, 0, 0))
+goldText = font.render("GOLD", True, (0, 0, 0))
+bronzeImg = [pygame.image.load("textures/medals/bronze/1.png"),
+             pygame.image.load("textures/medals/bronze/2.png"),
+             pygame.image.load("textures/medals/bronze/3.png"),
+             pygame.image.load("textures/medals/bronze/4.png"),
+             pygame.image.load("textures/medals/bronze/5.png"),
+             pygame.image.load("textures/medals/bronze/6.png")]
+bronzeTics = 0
+silverImg = [pygame.image.load("textures/medals/silver/1.png"),
+             pygame.image.load("textures/medals/silver/2.png"),
+             pygame.image.load("textures/medals/silver/3.png"),
+             pygame.image.load("textures/medals/silver/4.png"),
+             pygame.image.load("textures/medals/silver/5.png"),
+             pygame.image.load("textures/medals/silver/6.png")]
+silverTics = 0
+goldImg =   [pygame.image.load("textures/medals/gold/1.png"),
+             pygame.image.load("textures/medals/gold/2.png"),
+             pygame.image.load("textures/medals/gold/3.png"),
+             pygame.image.load("textures/medals/gold/4.png"),
+             pygame.image.load("textures/medals/gold/5.png"),
+             pygame.image.load("textures/medals/gold/6.png")]
+goldTics = 0
+
 pwrUp = pygame.image.load("textures/pwrUp.png")
 exitButton = pygame.image.load("textures/exit.png")
 
@@ -27,33 +60,36 @@ selectOrderMsg = pygame.image.load("textures/selectOrder.png")
 selectLeague = pygame.image.load("textures/selectLeague.png")
 
 
-
+#Initialize pygame and setup the window
 pygame.init()
 screen = pygame.display.set_mode([screen_width, screen_height])
 fps = 60
 
-
-placeNum = 0
-
-
+#List of all starting monster id's
 startingMonsters = [[0, 1, 2, 3, 5, 6, 7, 40],
                     [37, 43, 54, 56, 58, 26, 27, 28],
                     [4, 65, 62, 50, 48, 35, 32, 29]]
 
+#List of the initially selected monsters
 monsterList = [[], [], []]
 selectedMonsters = [monsters.monster(0, False, 0, 0), monsters.monster(0, False, 0, 0), monsters.monster(0, False, 0, 0)]
 
+#Display values for the monsters
 monstSize = 100
 borderDistanceX = 50
 borderDistanceY = 300
 displayDistance = monstSize + borderDistanceX
 
+#Tics for the animated sprites
 dynamicTics = [0, 0, 0]
 dynamicTicsSelect = [0, 0, 0]
 
+#Set a default monster list array.
+# First value of each entry states whether the monster in the order selection screen.
+# Second value of each entry contains the monster object
 chosen = [[False, monsters.monster(0, False, 0, 0)], [False, monsters.monster(0, False, 0, 0)], [False, monsters.monster(0, False, 0, 0)]]
 
-
+#Select the initial team
 def selectTeam():
     global chosen
     global monsterList
@@ -186,7 +222,7 @@ def selectTeam():
 
     return selectedMonsters
 
-
+#Select the order of the players team with a given monster list (mList)
 def selectOrder(mList):
     global selectedMonsters
     global chosen
@@ -228,9 +264,9 @@ def selectOrder(mList):
         pygame.draw.rect(screen, (255, 0, 0), rectSelect2, 3)
         pygame.draw.rect(screen, (255, 0, 0), rectSelect3, 3)
 
-        screen.blit(num1img, (405, 300))
-        screen.blit(num2img, (550, 300))
-        screen.blit(num3img, (695, 300))
+        screen.blit(oneImage, (405, 300))
+        screen.blit(twoImage, (550, 300))
+        screen.blit(threeImage, (695, 300))
 
 
         #Display Chosen Monsters
@@ -338,9 +374,11 @@ def selectOrder(mList):
                 # Player clicked on the Button
                 if mbDown:
                     # Player wants to Start
+                    #Setup the monsters
                     myGame.set_firstMon(chosen[0][1], chosen[0][1].select)
                     myGame.set_secMon(chosen[1][1], chosen[1][1].select)
                     myGame.set_lastMon(chosen[2][1], chosen[2][1].select)
+                    #start the game
                     myGame.new()
                     go = False
             else:
@@ -358,6 +396,8 @@ def selectOrder(mList):
 
 def selectEnemy():
 
+    global bronzeTics, silverTics, goldTics
+
     screen = pygame.display.set_mode([screen_width, screen_height])
 
     pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Battle Simulator - Choose your Enemy...')
@@ -368,6 +408,14 @@ def selectEnemy():
     go = True
 
     while go:
+
+        #reset tics if out of range
+        if bronzeTics > 41:
+            bronzeTics = 0
+        if silverTics > 41:
+            silverTics = 0
+        if goldTics > 41:
+            goldTics = 0
 
         # show mouse
         pygame.mouse.set_visible(True)
@@ -391,21 +439,31 @@ def selectEnemy():
         mousePos = pygame.mouse.get_pos()
 
         #Draw Selection Rectanles
-        rectSelect1 = pygame.Rect(200, 450, 110, 110)
-        rectSelect2 = pygame.Rect(545, 450, 110, 110)
-        rectSelect3 = pygame.Rect(890, 450, 110, 110)
-        pygame.draw.rect(screen, (0, 255, 50), rectSelect1, 100)
-        pygame.draw.rect(screen, (255, 255, 0), rectSelect2, 100)
-        pygame.draw.rect(screen, (255, 0, 0), rectSelect3, 100)
+        rectSelect1 = pygame.Rect(150, 450, 150, 150)
+        rectSelect2 = pygame.Rect(525, 450, 150, 150)
+        rectSelect3 = pygame.Rect(900, 450, 150, 150)
+        #pygame.draw.rect(screen, (0, 255, 50), rectSelect1, 100)
+        #pygame.draw.rect(screen, (255, 255, 0), rectSelect2, 100)
+        #pygame.draw.rect(screen, (255, 0, 0), rectSelect3, 100)
 
-        screen.blit(num1img, (205, 300))
-        screen.blit(num2img, (550, 300))
-        screen.blit(num3img, (895, 300))
+        screen.blit(bronzeText, (179, 700))
+        screen.blit(silverText, (564, 700))
+        screen.blit(goldText, (945, 700))
 
 
         if rectSelect1.collidepoint(mousePos):
             # set cursor to a hand
             pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+            #Print Rotating Medal
+            screen.blit(bronzeImg[bronzeTics // 7], (150, 450))
+            bronzeTics += 1
+
+            #Print static medals
+            screen.blit(silverImg[0], (525, 450))
+            screen.blit(goldImg[0], (900, 450))
+            silverTics = 0
+            goldTics = 0
 
             # Player clicked on the Button
             if mbDown:
@@ -419,6 +477,16 @@ def selectEnemy():
             # set cursor to a hand
             pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
 
+            # Print Rotating Medal
+            screen.blit(silverImg[silverTics // 7], (525, 450))
+            silverTics += 1
+
+            # Print static medals
+            screen.blit(bronzeImg[0], (150, 450))
+            screen.blit(goldImg[0], (900, 450))
+            bronzeTics = 0
+            goldTics = 0
+
             # Player clicked on the Button
             if mbDown:
                 # Player wants to Start
@@ -431,6 +499,16 @@ def selectEnemy():
             # set cursor to a hand
             pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
 
+            # Print Rotating Medal
+            screen.blit(goldImg[goldTics // 7], (900, 450))
+            goldTics += 1
+
+            # Print static medals
+            screen.blit(silverImg[0], (525, 450))
+            screen.blit(bronzeImg[0], (150, 450))
+            bronzeTics = 0
+            silverTics = 0
+
             # Player clicked on the Button
             if mbDown:
                 # Player wants to Start
@@ -442,6 +520,17 @@ def selectEnemy():
         else:
             # set normal cursor
             pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+            # Print static medals
+            screen.blit(bronzeImg[0], (150, 450))
+            screen.blit(silverImg[0], (525, 450))
+            screen.blit(goldImg[0], (900, 450))
+            bronzeTics = 0
+            silverTics = 0
+            goldTics = 0
+
+
+
 
         clock.tick(fps)
         pygame.display.update()
