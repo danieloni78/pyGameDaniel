@@ -63,7 +63,10 @@ selectLeague = pygame.image.load("textures/selectLeague.png")
 #Initialize pygame and setup the window
 pygame.init()
 screen = pygame.display.set_mode([screen_width, screen_height])
+#Setup Frames per Second
 fps = 60
+#Setup Selection Time in Seconds
+selectionTime = 30
 
 #List of all starting monster id's
 startingMonsters = [[0, 1, 2, 3, 5, 6, 7, 40],
@@ -72,7 +75,7 @@ startingMonsters = [[0, 1, 2, 3, 5, 6, 7, 40],
 
 #List of the initially selected monsters
 monsterList = [[], [], []]
-selectedMonsters = [monsters.monster(0, False, 0, 0), monsters.monster(0, False, 0, 0), monsters.monster(0, False, 0, 0)]
+selectedMonsters = [monsters.monster(0, False, 0, 0), monsters.monster(37, False, 0, 0), monsters.monster(4, False, 0, 0)]
 
 #Display values for the monsters
 monstSize = 100
@@ -87,12 +90,15 @@ dynamicTicsSelect = [0, 0, 0]
 #Set a default monster list array.
 # First value of each entry states whether the monster in the order selection screen.
 # Second value of each entry contains the monster object
-chosen = [[False, monsters.monster(0, False, 0, 0)], [False, monsters.monster(0, False, 0, 0)], [False, monsters.monster(0, False, 0, 0)]]
+chosen = [[False, monsters.monster(0, False, 0, 0)], [False, monsters.monster(37, False, 0, 0)], [False, monsters.monster(4, False, 0, 0)]]
 
 #Select the initial team
 def selectTeam():
     global chosen
     global monsterList
+
+    time = selectionTime
+    frames = 0
 
     screen = pygame.display.set_mode([screen_width + 175, screen_height])
 
@@ -118,11 +124,16 @@ def selectTeam():
         # show mouse
         pygame.mouse.set_visible(True)
 
-
+        #Render the Seconds
+        seconds = int (frames / fps)
+        secondsRender = font.render(f'{(time - seconds)} Seconds left', True, (0, 0, 0))
 
         #Load Background
         screen.fill((255,255,230))
         screen.blit(chooseTeamMsg, (100, 100))
+
+        #Load Time
+        screen.blit(secondsRender,(20, 20))
 
         #Button Press Actions
         for event in pygame.event.get():
@@ -142,11 +153,13 @@ def selectTeam():
         for n in startingMonsters:
 
             rectSelect = pygame.Rect(borderDistanceX, borderDistanceY + (displayDistance * line), 110, 110)
+
+            #Draw selection Rectangle
             pygame.draw.rect(screen, (255, 0, 0), rectSelect, 3)
 
             if chosen[line][0] == True:
 
-                    #Print Menu Image of the monster
+                    #Print Menu Image of the monster into rectangle
                     chosen[line][1].printMenu(True, borderDistanceX, borderDistanceY + (displayDistance * line))
 
             row = 0
@@ -214,18 +227,26 @@ def selectTeam():
                 # set normal cursor
                 pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
+        #Timer Runs up
+        if seconds >= time:
+            go = False
 
 
         clock.tick(fps)
         pygame.display.update()
+        frames +=1
 
 
     return selectedMonsters
+
 
 #Select the order of the players team with a given monster list (mList)
 def selectOrder(mList):
     global selectedMonsters
     global chosen
+
+    time = selectionTime
+    frames = 0
 
     mbDown = False
 
@@ -252,9 +273,14 @@ def selectOrder(mList):
         # show mouse
         pygame.mouse.set_visible(True)
 
+        #Render the Seconds
+        seconds = int (frames / fps)
+        secondsRender = font.render(f'{(time - seconds)} Seconds left', True, (0, 0, 0))
+
         # Load Background
         screen.fill((255, 255, 230))
         screen.blit(selectOrderMsg, (100, 100))
+        screen.blit(secondsRender, (20,20))
 
         #Draw Selection Rectanles
         rectSelect1 = pygame.Rect(400, 400, 110, 110)
@@ -390,15 +416,40 @@ def selectOrder(mList):
             pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
 
+        if seconds >= time:
+            #Reset the order if not all the monsters were selected
+            if chosen[0][0] == True and chosen[1][0] == True and chosen[2][0] == True:
+                # Setup the monsters
+                #Player selected all monsters, but did not click start
+                myGame.set_firstMon(chosen[0][1], chosen[0][1].select)
+                myGame.set_secMon(chosen[1][1], chosen[1][1].select)
+                myGame.set_lastMon(chosen[2][1], chosen[2][1].select)
+
+            else:
+                #Not all monsters were selected
+                myGame.set_firstMon(backupMonstList[0], backupMonstList[0].select)
+                myGame.set_secMon(backupMonstList[1], backupMonstList[1].select)
+                myGame.set_lastMon(backupMonstList[2], backupMonstList[2].select)
+
+            #Start Game
+            myGame.new()
+
+            go = False
+
+
         clock.tick(fps)
         pygame.display.update()
+        frames += 1
 
 
+#Select the enemy league
 def selectEnemy():
-
     global bronzeTics, silverTics, goldTics
 
     screen = pygame.display.set_mode([screen_width, screen_height])
+
+    time = selectionTime
+    frames = 0
 
     pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Battle Simulator - Choose your Enemy...')
     clock = pygame.time.Clock()
@@ -420,9 +471,14 @@ def selectEnemy():
         # show mouse
         pygame.mouse.set_visible(True)
 
+        #Render the Seconds
+        seconds = int (frames / fps)
+        secondsRender = font.render(f'{(time - seconds)} Seconds left', True, (0, 0, 0))
+
         #Load Background
         screen.fill((255,255,230))
         screen.blit(selectLeague, (200, 100))
+        screen.blit(secondsRender, (20,20))
 
         #Button Press Actions
         for event in pygame.event.get():
@@ -530,8 +586,14 @@ def selectEnemy():
             goldTics = 0
 
 
+        if seconds >= time:
+            # Set Default Enemy
+            myGame.set_Enemy(0)
+            # End loop
+            go = False
 
 
         clock.tick(fps)
         pygame.display.update()
+        frames += 1
 

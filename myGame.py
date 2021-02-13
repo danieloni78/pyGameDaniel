@@ -4,12 +4,12 @@ import enemy
 import attackParticles
 import sys
 import random
-import time
 import menus
 import enemyList
+import time
 
-
-
+#load font
+font = pygame.font.SysFont(None, 30)
 
 #Textures
 background = pygame.image.load("textures/background.png")
@@ -31,12 +31,10 @@ num3img = pygame.image.load("textures/3.png")
 pwrUp = pygame.image.load("textures/pwrUp.png")
 tradeImg = pygame.image.load("textures/trade.png")
 exitButton = pygame.image.load("textures/exit.png")
-
 tradeInMessage = pygame.image.load("textures/tradeInMsg.png")
 powerUpMsg = pygame.image.load("textures/powerUpMsg.png")
 
-
-
+#Screen Size
 screen_width = 1200
 screen_backImg = 600
 screen_panel = 225
@@ -46,10 +44,9 @@ screen_height = screen_backImg + screen_panel
 winningSound = pygame.mixer.Sound("sounds/victory.wav")
 losingSound = pygame.mixer.Sound("sounds/losing.wav")
 
-
-
 #Variables
 fps = 60
+selectionTime = 30
 
 #Player's Monster Selection
 firstMonstNr = 0
@@ -63,7 +60,6 @@ eFirstMonstNr = 0
 eSecondMonstNr = 0
 eLastMonstNr = 0
 
-
 #Set the amount of time the game idles after every action
 waitingAmount = 120
 
@@ -71,17 +67,12 @@ rounds = 1
 
 gameStage = 0
 
-
-
-
 screen = pygame.display.set_mode([screen_width, screen_height])
 
 turnOrder = []
 
 
 def new():
-
-
     global won
     global lost
     global gameStage
@@ -89,35 +80,30 @@ def new():
 
     global eFirstMonstNr, eSecondMonstNr, eLastMonstNr
 
-
     won = False
     lost = False
-
 
     player.setMonsters(firstMonstNr, secondMonstNr, lastMonstNr)
     enemy.setMonsters(eFirstMonstNr, eSecondMonstNr, eLastMonstNr)
 
     gameStage = 1
 
-    starten()
+    run()
 
 
 def printScreen():
-
-
-
     screen.blit(background, (0, 0))
     screen.blit(backPanel, (0, screen_backImg))
 
     if gameStage == 0:
-        screen.blit(evolveImg, (80, 20))
+        screen.blit(evolveImg, (200, 100))
         screen.blit(skipImg, (screen_width - 220, 20))
 
     if gameStage == 1:
-        screen.blit(powerUpMsg, (80, 20))
+        screen.blit(powerUpMsg, (200, 100))
 
     if gameStage == 3:
-        screen.blit(tradeInMessage, (80, 20))
+        screen.blit(tradeInMessage, (200, 100))
         screen.blit(skipImg, (screen_width - 220, 20))
 
     player.printPlayerMonsters()
@@ -125,22 +111,21 @@ def printScreen():
     for a in attackParticles.currentParticles:
         a.printAttack()
 
-    #pygame.display.update()
 
-
-
-def starten():
+def run():
     global waitingAmount
     global turnOrder
     global rounds
     global gameStage
+
+    selTime = selectionTime
+    frames = 0
 
     mbDown = False
 
     gameStage = 1
 
     waitingCounter = 0
-
 
     clock = pygame.time.Clock()
 
@@ -149,15 +134,10 @@ def starten():
 
     if random.randint(0,1) == 0:
         playerTurn = 0
-
     else:
         playerTurn = 1
 
-
-
     go = True
-
-
 
     while go:
 
@@ -197,6 +177,7 @@ def starten():
             time.sleep(3)
             rounds += 1
             gameStage = 3
+            frames = 0
             set_Enemy(difficulty)
             player.restore()
             enemy.restore()
@@ -204,7 +185,15 @@ def starten():
         #Switch Monster (random)
         elif gameStage == 3:
 
+            #Only alow trade in after round 5 and after that in every 2nd round
             if rounds >= 5 and rounds % 2 != 0:
+                # Render the Seconds
+                seconds = int(frames / fps)
+                secondsRender = font.render(f'{(selTime - seconds)} Seconds left', True, (0, 0, 0))
+
+                # Show Seconds
+                screen.blit(secondsRender, (20, 20))
+
                 sButton = pygame.Rect(screen_width - 220, 20, 200, 100)
 
                 # show mouse
@@ -250,6 +239,12 @@ def starten():
                     # set normal cursor
                     pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
+
+                if seconds >= selTime:
+                    # Players time runs up
+                    gameStage = 1
+                    menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
+
             else:
                 gameStage = 0
 
@@ -281,6 +276,12 @@ def starten():
 
         #Choose special Attacker
         elif gameStage == 1:
+            # Render the Seconds
+            seconds = int(frames / fps)
+            secondsRender = font.render(f'{(selTime - seconds)} Seconds left', True, (0, 0, 0))
+
+            #Show Seconds
+            screen.blit(secondsRender,(20,20))
 
             #show mouse
             pygame.mouse.set_visible(True)
@@ -307,9 +308,22 @@ def starten():
                         enemy.monsterList[2].turnSpecialAttacker()
                         gameStage = 2
 
+            if seconds >= selTime:
+                #The player gets punished for not selecting in time.
+                #Remove "#" to give him power up after the time is up
+
+                #player.monsterList[2].turnSpecialAttacker()
+                enemy.monsterList[2].turnSpecialAttacker()
+                gameStage = 2
+
         #Evolve Monster
         elif gameStage == 0:
+            # Render the Seconds
+            seconds = int(frames / fps)
+            secondsRender = font.render(f'{(selTime - seconds)} Seconds left', True, (0, 0, 0))
 
+            #Show Seconds
+            screen.blit(secondsRender,(20,20))
 
             skipButton = pygame.Rect(screen_width-220, 20, 200, 100)
 
@@ -354,7 +368,6 @@ def starten():
 
                 # Player clicked on the Button
                 if mbDown:
-
                     #Player wants to skip
                     gameStage = 1
                     menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
@@ -363,9 +376,15 @@ def starten():
                 #set normal cursor
                 pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
+            if seconds >= selTime:
+                # Players time runs up
+                gameStage = 1
+                menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
+
 
         clock.tick(fps)
         pygame.display.update()
+        frames += 1
 
 
 def set_firstMon(monster, number):

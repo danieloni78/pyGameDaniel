@@ -6,14 +6,11 @@ def loadEnemy(difficulty, rounds):
     eSecondMonstNr = 0
     eLastMonstNr = 0
 
-
     #If player played more than 10 rounds, chose a random enemy (of the last 4 enemies)
     if rounds > 10:
         eRounds = random.randint(7, 10)
     else:
         eRounds = rounds
-
-
 
     #easy
     if difficulty == 0:
@@ -75,7 +72,6 @@ def loadEnemy(difficulty, rounds):
             eSecondMonstNr = 18
             eLastMonstNr = 25
 
-
     # Medium
     elif difficulty == 1:
 
@@ -136,7 +132,6 @@ def loadEnemy(difficulty, rounds):
             eSecondMonstNr = 42
             eLastMonstNr = 36
 
-
     # Hard
     else:
 
@@ -196,7 +191,6 @@ def loadEnemy(difficulty, rounds):
             eFirstMonstNr = 70
             eSecondMonstNr = 68
             eLastMonstNr = 69
-
 
     #Create an array of monster IDs
     enemySelection = [eFirstMonstNr, eSecondMonstNr, eLastMonstNr]
