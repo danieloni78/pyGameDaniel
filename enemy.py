@@ -1,4 +1,12 @@
+# This class is used to control the enemy:
+# It contains functions to:
+# 1. Setup the team
+# 2. Print the monsters
+# 3. handle attacks
+# 4. check if he is dead
+
 import pygame
+
 import monsters
 
 screen_width = 1200
@@ -19,15 +27,12 @@ e3PosY = 380
 
 currentlyAttacking = 0
 
-doubleAttacker = 2
-doubleAttacking = False
 
-
+# Setup the team
 def setMonsters(firstMon, secMon, thirdMon):
-
     global monsterList
     global e1PosX, e1PosY, e2PosX, e2PosY, e3PosX, e3PosY
-    global  currentlyAttacking, doubleAttacking, doubleAttacker
+    global currentlyAttacking, doubleAttacking, doubleAttacker
 
     currentlyAttacking = 0
     doubleAttacker = 2
@@ -37,17 +42,17 @@ def setMonsters(firstMon, secMon, thirdMon):
     monster2 = monsters.monster(secMon, False, e2PosX, e2PosY)
     monster3 = monsters.monster(thirdMon, False, e3PosX, e3PosY)
 
-    monsterList= [monster1, monster2, monster3]
+    monsterList = [monster1, monster2, monster3]
 
 
-def printEnemyMonsters():
-
+# Print all monsters
+def printMonsters():
     monsterList[0].printMonster()
     monsterList[1].printMonster()
     monsterList[2].printMonster()
 
 
-
+# Check if dead
 def isDead():
     deadCounter = 0
     dead = False
@@ -63,8 +68,9 @@ def isDead():
 
     return dead
 
-def isAttacking():
 
+# Check if attacking
+def isAttacking():
     attacking = False
 
     for m in monsterList:
@@ -74,6 +80,7 @@ def isAttacking():
     return attacking
 
 
+# Get the next target
 def getNextTarget():
     global monsterList
 
@@ -88,6 +95,7 @@ def getNextTarget():
     return target
 
 
+# Attack
 def attack(target):
     global monsterList
     global currentlyAttacking
@@ -119,11 +127,7 @@ def attack(target):
     currentlyAttacking += 1
 
 
+# Restore the health values
 def restore():
     for m in monsterList:
-        m.hp = m.maxHp
-
-def setDoubleAttacker(number):
-    global doubleAttacker, doubleAttacking
-    doubleAttacker = number
-    doubleAttacking = True
+        m.restore()

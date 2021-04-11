@@ -1,18 +1,37 @@
-import pygame
-import player
-import enemy
-import attackParticles
-import sys
+# This class is used to control the game:
+# It contains functions to:
+# 1. Initialize a Round
+# 2. Print the game content to the screen
+# 3. Run the game
+# 4. Setup Monsters and enemy
+
+# Background from: https://OpenGamersArt.org
+# Pokemon Textures from TheSpritersResource: https://www.spriters-resource.com
+
 import random
-import menus
-import enemyList
+import sys
 import time
 
-#load font
+import pygame
+
+import attackParticles
+import enemy
+import enemyList
+import menus
+import player
+
+# load font
 font = pygame.font.SysFont(None, 30)
 
-#Textures
-background = pygame.image.load("textures/background.png")
+# Textures
+background = [pygame.image.load("textures/backgrounds/1.png"),
+              pygame.image.load("textures/backgrounds/2.png"),
+              pygame.image.load("textures/backgrounds/3.png"),
+              pygame.image.load("textures/backgrounds/4.png"),
+              pygame.image.load("textures/backgrounds/5.png"),
+              pygame.image.load("textures/backgrounds/6.png"), ]
+backgroundNr = 0
+
 backPanel = pygame.image.load("textures/panel.png")
 lostImg = pygame.image.load("textures/lost.png")
 wonImg = pygame.image.load("textures/win.png")
@@ -34,33 +53,33 @@ exitButton = pygame.image.load("textures/exit.png")
 tradeInMessage = pygame.image.load("textures/tradeInMsg.png")
 powerUpMsg = pygame.image.load("textures/powerUpMsg.png")
 
-#Screen Size
+# Screen Size
 screen_width = 1200
 screen_backImg = 600
 screen_panel = 225
 screen_height = screen_backImg + screen_panel
 
-#Sounds
+# Sounds
 winningSound = pygame.mixer.Sound("sounds/victory.wav")
 losingSound = pygame.mixer.Sound("sounds/losing.wav")
 
-#Variables
+# Variables
 fps = 60
-selectionTime = 30
+selectionTime = 20
 
-#Player's Monster Selection
+# Player's Monster Selection
 firstMonstNr = 0
 secondMonstNr = 0
 lastMonstNr = 0
 
 difficulty = 0
 
-#Enemy's monster selection
+# Enemy's monster selection
 eFirstMonstNr = 0
 eSecondMonstNr = 0
 eLastMonstNr = 0
 
-#Set the amount of time the game idles after every action
+# Set the amount of time the game idles after every action
 waitingAmount = 120
 
 rounds = 1
@@ -72,46 +91,58 @@ screen = pygame.display.set_mode([screen_width, screen_height])
 turnOrder = []
 
 
-def new():
-    global won
-    global lost
+# Initialize a new Round
+def newRound():
     global gameStage
     global firstMonstNr, secondMonstNr, lastMonstNr
 
     global eFirstMonstNr, eSecondMonstNr, eLastMonstNr
 
-    won = False
-    lost = False
+    global backgroundNr
 
+    # select random background img
+    if rounds <= 6:
+        backgroundNr = rounds - 1
+    else:
+        backgroundNr = random.randint(0, 5)
+
+    # Set the Monsters
     player.setMonsters(firstMonstNr, secondMonstNr, lastMonstNr)
     enemy.setMonsters(eFirstMonstNr, eSecondMonstNr, eLastMonstNr)
 
+    # Power-Up Stage - First Phase of the game round
     gameStage = 1
 
+    # Run the game
     run()
 
 
+# Function to display the content onto the screen
 def printScreen():
-    screen.blit(background, (0, 0))
+    screen.blit(background[backgroundNr], (0, 0))
     screen.blit(backPanel, (0, screen_backImg))
 
+    # Evolve Stage
     if gameStage == 0:
         screen.blit(evolveImg, (200, 100))
         screen.blit(skipImg, (screen_width - 220, 20))
 
-    if gameStage == 1:
+    # PowerUp Stage
+    elif gameStage == 1:
         screen.blit(powerUpMsg, (200, 100))
 
-    if gameStage == 3:
+    # Trading Stage
+    elif gameStage == 3:
         screen.blit(tradeInMessage, (200, 100))
         screen.blit(skipImg, (screen_width - 220, 20))
 
-    player.printPlayerMonsters()
-    enemy.printEnemyMonsters()
+    player.printMonsters()
+    enemy.printMonsters()
     for a in attackParticles.currentParticles:
         a.printAttack()
 
 
+# Function that runs the game
 def run():
     global waitingAmount
     global turnOrder
@@ -129,48 +160,54 @@ def run():
 
     clock = pygame.time.Clock()
 
+    # Set the monsters for player and enemy
     player.setMonsters(firstMonstNr, secondMonstNr, lastMonstNr)
     enemy.setMonsters(eFirstMonstNr, eSecondMonstNr, eLastMonstNr)
 
-    if random.randint(0,1) == 0:
+    # Choose who starts the round (Coin Flip)
+    if random.randint(0, 1) == 0:
         playerTurn = 0
     else:
         playerTurn = 1
 
     go = True
 
+    # Game Loop
     while go:
 
-        pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Battle Simulator - Round: {rounds}')
+        pygame.display.set_caption(f'WIP Project: pyGame by Daniel Wetzel - Pokemon Battle Simulator - Round: {rounds}')
 
+        # Get system events relevant to the game
         for event in pygame.event.get():
-            #Close the game
+            # Close the game
             if event.type == pygame.QUIT: sys.exit()
 
-            #Player clicked Mouse Button
+            # Player clicked Mouse Button
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mbDown = True
             else:
                 mbDown = False
 
+        # Call the Output to the screen
         attackParticles.hanldeAttacks()
         printScreen()
 
+        # 0 = Enemies Turn; 1 = Players Turn
         if playerTurn > 1:
             playerTurn = 0
 
+        # If the player is dead
         if player.isDead():
-            #go = False
-            screen.fill((100,100,100))
+            screen.fill((100, 100, 100))
             screen.blit(lostImg, (350, 165))
             pygame.display.update()
             pygame.mixer.Sound.play(losingSound)
             time.sleep(3)
             menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
 
+        # If the enemy is dead
         elif enemy.isDead():
-            #go = False
-            screen.fill((200,200,200))
+            screen.fill((200, 200, 200))
             screen.blit(wonImg, (350, 165))
             pygame.display.update()
             pygame.mixer.Sound.play(winningSound)
@@ -182,10 +219,10 @@ def run():
             player.restore()
             enemy.restore()
 
-        #Switch Monster (random)
-        elif gameStage == 3:
+        # Switch Monster (random)
+        if gameStage == 3:
 
-            #Only alow trade in after round 5 and after that in every 2nd round
+            # Only alow trade in after round 5 and after that in every 2nd round
             if rounds >= 5 and rounds % 2 != 0:
                 # Render the Seconds
                 seconds = int(frames / fps)
@@ -239,7 +276,6 @@ def run():
                     # set normal cursor
                     pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
-
                 if seconds >= selTime:
                     # Players time runs up
                     gameStage = 1
@@ -248,15 +284,13 @@ def run():
             else:
                 gameStage = 0
 
-
-        #Battle Phase
-        if gameStage == 2:
+        # Battle Phase
+        elif gameStage == 2:
 
             # hide normal mouse
             pygame.mouse.set_visible(False)
 
-
-            if  waitingCounter > waitingAmount:
+            if waitingCounter > waitingAmount:
 
                 if player.isAttacking() == False:
 
@@ -274,113 +308,107 @@ def run():
 
             waitingCounter += 1
 
-        #Choose special Attacker
+        # Choose special Attacker
         elif gameStage == 1:
             # Render the Seconds
             seconds = int(frames / fps)
             secondsRender = font.render(f'{(selTime - seconds)} Seconds left', True, (0, 0, 0))
 
-            #Show Seconds
-            screen.blit(secondsRender,(20,20))
+            # Show Seconds
+            screen.blit(secondsRender, (20, 20))
 
-            #show mouse
+            # show mouse
             pygame.mouse.set_visible(True)
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
-            #get mouse position
+            # get mouse position
             mousePos = pygame.mouse.get_pos()
 
-            #if mouse is on one of the players monsters
+            # if mouse is on one of the players monsters
             for pMonst in player.monsterList:
 
                 if pMonst.rect.collidepoint(mousePos):
 
-                    #hide normal mouse
+                    # hide normal mouse
                     pygame.mouse.set_visible(False)
 
-                    #Show LVL Up symbol
+                    # Show LVL Up symbol
                     screen.blit(pwrUp, mousePos)
 
-                    #Player clicked on the monster
+                    # Player clicked on the monster
                     if mbDown:
-
                         pMonst.turnSpecialAttacker()
                         enemy.monsterList[2].turnSpecialAttacker()
                         gameStage = 2
 
             if seconds >= selTime:
-                #The player gets punished for not selecting in time.
-                #Remove "#" to give him power up after the time is up
+                # The player gets punished for not selecting in time.
+                # Remove "#" to give him power up after the time is up
 
-                #player.monsterList[2].turnSpecialAttacker()
+                # player.monsterList[2].turnSpecialAttacker()
                 enemy.monsterList[2].turnSpecialAttacker()
                 gameStage = 2
 
-        #Evolve Monster
+        # Evolve Monster
         elif gameStage == 0:
             # Render the Seconds
             seconds = int(frames / fps)
             secondsRender = font.render(f'{(selTime - seconds)} Seconds left', True, (0, 0, 0))
 
-            #Show Seconds
-            screen.blit(secondsRender,(20,20))
+            # Show Seconds
+            screen.blit(secondsRender, (20, 20))
 
-            skipButton = pygame.Rect(screen_width-220, 20, 200, 100)
+            skipButton = pygame.Rect(screen_width - 220, 20, 200, 100)
 
-            #show mouse
+            # show mouse
             pygame.mouse.set_visible(True)
 
-            #get mouse position
+            # get mouse position
             mousePos = pygame.mouse.get_pos()
 
-            #if mouse is on one of the players monsters
+            # if mouse is on one of the players monsters
             for pMonst in player.monsterList:
 
                 if pMonst.evolvesTo != -1:
 
                     if pMonst.rect.collidepoint(mousePos):
 
-                        #hide normal mouse
+                        # hide normal mouse
                         pygame.mouse.set_visible(False)
 
-                        #Show LVL Up symbol
+                        # Show LVL Up symbol
                         screen.blit(lvlUp, mousePos)
 
-
-                        #Player clicked on the monster
+                        # Player clicked on the monster
                         if mbDown:
 
-                            #Try to evolve the monster
+                            # Try to evolve the monster
                             selectedMonst = pMonst.evolve()
 
-                            #Monster could be evolved
+                            # Monster could be evolved
                             if selectedMonst:
-
                                 gameStage = 1
                                 menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
 
-
-
             if skipButton.collidepoint(mousePos):
 
-                #set cursor to a hand
+                # set cursor to a hand
                 pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
 
                 # Player clicked on the Button
                 if mbDown:
-                    #Player wants to skip
+                    # Player wants to skip
                     gameStage = 1
                     menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
 
             else:
-                #set normal cursor
+                # set normal cursor
                 pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
             if seconds >= selTime:
                 # Players time runs up
                 gameStage = 1
                 menus.selectOrder([player.monsterList[0], player.monsterList[1], player.monsterList[2]])
-
 
         clock.tick(fps)
         pygame.display.update()
@@ -391,7 +419,7 @@ def set_firstMon(monster, number):
     global firstMonstNr
     firstMonstNr = number
 
-    #Delete obsolete Instance
+    # Delete obsolete Instance
     del monster
 
 
@@ -399,7 +427,7 @@ def set_secMon(monster, number):
     global secondMonstNr
     secondMonstNr = number
 
-    #Delete obsolete Instance
+    # Delete obsolete Instance
     del monster
 
 
@@ -407,22 +435,21 @@ def set_lastMon(monster, number):
     global lastMonstNr
     lastMonstNr = number
 
-    #Delet Obsolete Instance
+    # Delet Obsolete Instance
     del monster
 
 
 def set_Enemy(number):
-
     global eFirstMonstNr, eSecondMonstNr, eLastMonstNr
     global difficulty
     global rounds
 
     difficulty = number
 
-    eRounds = rounds-1
+    eRounds = rounds - 1
 
     enemySelection = enemyList.loadEnemy(difficulty, eRounds)
 
-    eFirstMonstNr= enemySelection[0]
+    eFirstMonstNr = enemySelection[0]
     eSecondMonstNr = enemySelection[1]
     eLastMonstNr = enemySelection[2]

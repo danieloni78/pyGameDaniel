@@ -1,6 +1,13 @@
-import pygame
-import monsters
+# This class is used to control the player:
+# It contains functions to:
+# 1. Setup the team
+# 2. Print the monsters
+# 3. handle attacks
+# 4. check if he is dead
 
+import pygame
+
+import monsters
 
 screen_width = 1200
 screen_backImg = 600
@@ -20,14 +27,12 @@ m3PosY = 380
 
 currentlyAttacking = 0
 
-doubleAttacker = 2
-doubleAttacking = False
 
+# Setup the team
 def setMonsters(firstMon, secMon, thirdMon):
-
     global monsterList
     global m1PosX, m1PosY, m2PosX, m2PosY, m3PosX, m3PosY
-    global  currentlyAttacking, doubleAttacking, doubleAttacker
+    global currentlyAttacking, doubleAttacking, doubleAttacker
 
     currentlyAttacking = 0
     doubleAttacker = 2
@@ -37,16 +42,17 @@ def setMonsters(firstMon, secMon, thirdMon):
     monster2 = monsters.monster(secMon, True, m2PosX, m2PosY)
     monster3 = monsters.monster(thirdMon, True, m3PosX, m3PosY)
 
-    monsterList= [monster1, monster2, monster3]
+    monsterList = [monster1, monster2, monster3]
 
 
-def printPlayerMonsters():
-
-
+# Print all monsters
+def printMonsters():
     monsterList[0].printMonster()
     monsterList[1].printMonster()
     monsterList[2].printMonster()
 
+
+# Check if dead
 def isDead():
     deadCounter = 0
     dead = False
@@ -63,8 +69,8 @@ def isDead():
     return dead
 
 
+# Check if attacking
 def isAttacking():
-
     attacking = False
 
     for m in monsterList:
@@ -74,8 +80,8 @@ def isAttacking():
     return attacking
 
 
+# Get the next target
 def getNextTarget():
-
     global monsterList
 
     target = monsterList[0]
@@ -88,8 +94,9 @@ def getNextTarget():
 
     return target
 
-def attack(target):
 
+# Attack
+def attack(target):
     global monsterList
     global currentlyAttacking
 
@@ -100,7 +107,7 @@ def attack(target):
         if currentlyAttacking >= 3:
             currentlyAttacking = 0
 
-    #Normal attacks
+    # Normal attacks
     if currentlyAttacking < 3:
         if monsterList[0].hp <= 0 and currentlyAttacking == 0:
             if monsterList[1].hp > 0:
@@ -113,17 +120,14 @@ def attack(target):
 
         monsterList[currentlyAttacking].attack(target)
 
-    #Special Attack turn
+    # Special Attack turn
     elif currentlyAttacking == 3:
         monsterList[doubleAttacker].attack(target)
 
     currentlyAttacking += 1
 
+
+# Restore the health values
 def restore():
     for m in monsterList:
-        m.hp = m.maxHp
-
-def setDoubleAttacker(number):
-    global doubleAttacker, doubleAttacking
-    doubleAttacker = number
-    doubleAttacking = True
+        m.restore()

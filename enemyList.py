@@ -1,27 +1,31 @@
+# This class is used to store the enemy moster lists:
+# It contains functions to:
+# 1. Retrun a list of monsters based on the difficulty and round
+
 import random
 
-def loadEnemy(difficulty, rounds):
 
+def loadEnemy(difficulty, rounds):
     eFirstMonstNr = 0
     eSecondMonstNr = 0
     eLastMonstNr = 0
 
-    #If player played more than 10 rounds, chose a random enemy (of the last 4 enemies)
+    # If player played more than 10 rounds, chose a random enemy (of the last 4 enemies)
     if rounds > 10:
         eRounds = random.randint(7, 10)
     else:
         eRounds = rounds
 
-    #easy
+    # easy
     if difficulty == 0:
 
-        #Enemy in the first round
+        # Enemy in the first round
         if eRounds == 0:
             eFirstMonstNr = 48
             eSecondMonstNr = 50
             eLastMonstNr = 7
 
-        #Enemy in the second Round
+        # Enemy in the second Round
         elif eRounds == 1:
             eFirstMonstNr = 49
             eSecondMonstNr = 50
@@ -192,8 +196,8 @@ def loadEnemy(difficulty, rounds):
             eSecondMonstNr = 68
             eLastMonstNr = 69
 
-    #Create an array of monster IDs
+    # Create an array of monster IDs
     enemySelection = [eFirstMonstNr, eSecondMonstNr, eLastMonstNr]
 
-    #return enemy monster list
+    # return enemy monster list
     return enemySelection

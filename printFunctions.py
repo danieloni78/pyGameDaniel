@@ -1,9 +1,9 @@
+# Method found at: https://nerdparadise.com/programming/pygameblitopacity
+
 import pygame
 
-#Chose System Font
 
-
-
+# Print a given image transparent
 def print_transparent(screen, image, coordinates, opacity):
     x_temp = coordinates[0]
     y_temp = coordinates[1]
@@ -12,4 +12,3 @@ def print_transparent(screen, image, coordinates, opacity):
     tempImg.blit(image, (0, 0))
     tempImg.set_alpha(opacity)
     screen.blit(tempImg, coordinates)
-
